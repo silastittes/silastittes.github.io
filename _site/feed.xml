@@ -7,20 +7,6 @@
     <atom:link href="silastittes.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>Another one of those blog posts about apply</title>
-        <description>&lt;p&gt;Here are some recent thoughts I’ve had about using the apply functions in R. I imagine my target audience for this post as being pretty small. Many readers will already be better than me at using these functions, and some will not have enough experience using them for this post to be useful. As always, I got something out of writing it, so I guess that’s something.&lt;/p&gt;
-
-&lt;p&gt;Hard to believe it’s been more than a year since I’ve made a post. I plan on writing some more biology posts soon so stay tuned.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/applying.pdf&quot;&gt;Read it here!&lt;/a&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Wed, 31 Aug 2016 00:00:00 -0600</pubDate>
-        <link>silastittes.github.io/apply-here/</link>
-        <guid isPermaLink="true">silastittes.github.io/apply-here/</guid>
-      </item>
-    
-      <item>
         <title>Another blog post about the apply function</title>
         <description>&lt;p&gt;The most excellent Hadley Wickham has a &lt;a href=&quot;https://www.youtube.com/watch?v=GyNqlOjhPCQ&quot;&gt;great presentation&lt;/a&gt; about functional 
 programming where he compares the redundancies in cupcake recipes to the 
@@ -66,7 +52,7 @@ compare in syntax and efficiency.&lt;/p&gt;
 
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loop_time&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apply_time&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Time difference of -0.0001661777 secs&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Time difference of -4.529953e-05 secs&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#is the same output is produced?
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storage_loop&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storage_apply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
@@ -187,34 +173,38 @@ as there is a bit of a ``start up’’ cost.&lt;/p&gt;
 
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apply_time&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mcapply_time&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Time difference of -0.005370855 secs&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;## Time difference of -0.005709171 secs&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;Here is a summary of my current feelings about for loops version functional 
 programming approaches:&lt;/p&gt;
 
-&lt;p&gt;\begin{center}
-    \begin{tabular}{ | p{2.5cm} | p{2.5cm} | p{2.5cm} | p{2.5cm} | p{2.5cm} | }
-    \hline
-    \bf{\phantom{poop}} &amp;amp; \bf{pro &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop} &amp;amp; \bf{con &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop}
-    &amp;amp; \bf{pro &lt;code class=&quot;highlighter-rouge&quot;&gt;apply&lt;/code&gt;} &amp;amp; \bf{con &lt;code class=&quot;highlighter-rouge&quot;&gt;apply&lt;/code&gt;} &lt;br /&gt;
-    \hline \hline
-    Syntax &amp;amp; 
-    Straight forward, similar across programming languages. Not unpleasant to
-    look at. Easier to make one-off test cases to ensure the script does 
-    what you intended. &amp;amp; 
-    Requires more typing. Requires explicitly allotting storage. &amp;amp;
-    Far more compact. &amp;amp;
-    Sometimes difficult to write and interpret. Hard to make “pretty” 
-    especially with anonymous function calls. Less dealing with storage. &lt;br /&gt;
-    \hline
-    Comp. \newline Efficiency &amp;amp;
-    \phantom{slow} &amp;amp;
-    slow &amp;amp;
-    fast! parallelizable. Even faster! (sometimes) &amp;amp;
-    \phantom{fast} &lt;br /&gt;
-    \hline
-    \end{tabular}
-\end{center}&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt; &lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;pro for loop&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;con for loop&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;pro apply&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;con apply&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Syntax&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Straight forward, similar across programming languages. Not unpleasant to look at. Easier to make one-off test cases to ensure the script does what you intended.&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Requires more typing. Requires explicitly allotting storage.&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Far more compact.&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sometimes difficult to write and interpret. Hard to make “pretty” especially with anonymous function calls. Less dealing with storage.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Comp. Efficiency&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;slow&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;fast! parallelizable. Even faster! (sometimes)&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;In summary, if you’re new to programming and using &lt;code class=&quot;highlighter-rouge&quot;&gt;R&lt;/code&gt;, learn how to use loop 
 structures, which will make you more prepared to learn other languages. Once 
@@ -224,6 +214,15 @@ to work in &lt;code class=&quot;highlighter-rouge&quot;&gt;apply&lt;/code&gt; ca
         <pubDate>Wed, 31 Aug 2016 00:00:00 -0600</pubDate>
         <link>silastittes.github.io/applying/</link>
         <guid isPermaLink="true">silastittes.github.io/applying/</guid>
+      </item>
+    
+      <item>
+        <title>Gettin really techie 'round these parts.</title>
+        <description>&lt;p&gt;Thanks to &lt;a href=&quot;https://github.com/yihui/knitr-jekyll&quot;&gt;Yihui Xie’s knitr-jekyll repository&lt;/a&gt;, I think I’ve greatly improved my blog’s design by making html posts. I’m leaving the pdf blogs up for nostalgia’s sake.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 30 Aug 2016 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/moved-my-site/</link>
+        <guid isPermaLink="true">silastittes.github.io/moved-my-site/</guid>
       </item>
     
       <item>

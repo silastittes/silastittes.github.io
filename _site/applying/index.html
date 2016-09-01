@@ -122,7 +122,7 @@ compare in syntax and efficiency.</p>
 
 </span><span class="n">loop_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">apply_time</span></code></pre></figure>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -0.0001661777 secs</code></pre></figure>
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -4.529953e-05 secs</code></pre></figure>
 
 <figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1">#is the same output is produced?
 </span><span class="n">mean</span><span class="p">(</span><span class="n">storage_loop</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">storage_apply</span><span class="p">)</span></code></pre></figure>
@@ -243,34 +243,38 @@ as there is a bit of a ``start up’’ cost.</p>
 
 </span><span class="n">apply_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mcapply_time</span></code></pre></figure>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -0.005370855 secs</code></pre></figure>
+<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -0.005709171 secs</code></pre></figure>
 
 <p>Here is a summary of my current feelings about for loops version functional 
 programming approaches:</p>
 
-<p>\begin{center}
-    \begin{tabular}{ | p{2.5cm} | p{2.5cm} | p{2.5cm} | p{2.5cm} | p{2.5cm} | }
-    \hline
-    \bf{\phantom{poop}} &amp; \bf{pro <code class="highlighter-rouge">for</code> loop} &amp; \bf{con <code class="highlighter-rouge">for</code> loop}
-    &amp; \bf{pro <code class="highlighter-rouge">apply</code>} &amp; \bf{con <code class="highlighter-rouge">apply</code>} <br />
-    \hline \hline
-    Syntax &amp; 
-    Straight forward, similar across programming languages. Not unpleasant to
-    look at. Easier to make one-off test cases to ensure the script does 
-    what you intended. &amp; 
-    Requires more typing. Requires explicitly allotting storage. &amp;
-    Far more compact. &amp;
-    Sometimes difficult to write and interpret. Hard to make “pretty” 
-    especially with anonymous function calls. Less dealing with storage. <br />
-    \hline
-    Comp. \newline Efficiency &amp;
-    \phantom{slow} &amp;
-    slow &amp;
-    fast! parallelizable. Even faster! (sometimes) &amp;
-    \phantom{fast} <br />
-    \hline
-    \end{tabular}
-\end{center}</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center">pro for loop</th>
+      <th style="text-align: center">con for loop</th>
+      <th style="text-align: center">pro apply</th>
+      <th style="text-align: center">con apply</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Syntax</td>
+      <td style="text-align: center">Straight forward, similar across programming languages. Not unpleasant to look at. Easier to make one-off test cases to ensure the script does what you intended.</td>
+      <td style="text-align: center">Requires more typing. Requires explicitly allotting storage.</td>
+      <td style="text-align: center">Far more compact.</td>
+      <td style="text-align: center">Sometimes difficult to write and interpret. Hard to make “pretty” especially with anonymous function calls. Less dealing with storage.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Comp. Efficiency</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">slow</td>
+      <td style="text-align: center">fast! parallelizable. Even faster! (sometimes)</td>
+      <td style="text-align: center"> </td>
+    </tr>
+  </tbody>
+</table>
 
 <p>In summary, if you’re new to programming and using <code class="highlighter-rouge">R</code>, learn how to use loop 
 structures, which will make you more prepared to learn other languages. Once 
