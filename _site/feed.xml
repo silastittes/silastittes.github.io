@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Silas B. Tittes</title>
+    <description>Adventures in genomics, evolutionary biology, and data science</description>
+    <link>silastittes.github.io</link>
+    <atom:link href="silastittes.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Another one of those blog posts about apply</title>
+        <description>&lt;p&gt;Here are some recent thoughts I’ve had about using the apply functions in R. I imagine my target audience for this post as being pretty small. Many readers will already be better than me at using these functions, and some will not have enough experience using them for this post to be useful. As always, I got something out of writing it, so I guess that’s something.&lt;/p&gt;
+
+&lt;p&gt;Hard to believe it’s been more than a year since I’ve made a post. I plan on writing some more biology posts soon so stay tuned.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/applying.pdf&quot;&gt;Read it here!&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 31 Aug 2016 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/apply-here/</link>
+        <guid isPermaLink="true">silastittes.github.io/apply-here/</guid>
+      </item>
+    
+      <item>
+        <title>Additive alleles addendum</title>
+        <description>&lt;p&gt;I’ve made some realizations since posting that last one, but many personal mysteries persist. Time to hit the books. I apologize for the layout of text and figures on this post. It’s a little hard to track and differentiate between paragraphs and captions. Have fun.
+&lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/AdditiveAlleles_Addendum.pdf&quot;&gt;Enjoy^2!&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 23 Aug 2015 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/additive-alleles-addendum/</link>
+        <guid isPermaLink="true">silastittes.github.io/additive-alleles-addendum/</guid>
+      </item>
+    
+      <item>
+        <title>Additive alleles and drift Part I, or how to be a bad TA.</title>
+        <description>&lt;p&gt;July and August have been rather busy months for me. On July 14th, my wife and I had a baby. His name is Felix. He’s awesome. In the science world, I’ve been revising two papers I’m a co-author on, both to do with drought adaptation in &lt;em&gt;Brassia rapa&lt;/em&gt; populations in California. I’m glad I’ve finally gotten around to writing another blog post. This one is about additive alleles. I learned a lot writing this post. I hope others get something out of it too. If nothing else, how NOT to do something. &lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/AdditiveAlleles_1.pdf&quot;&gt;Enjoy!&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 19 Aug 2015 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/2015-additive-alleles/</link>
+        <guid isPermaLink="true">silastittes.github.io/2015-additive-alleles/</guid>
+      </item>
+    
+      <item>
+        <title>How to build a deck of caRds.</title>
+        <description>&lt;p&gt;I have been working on a second blog post for a while. It concerns a simple simulation of a quantitative trait controlled by many independent additive alleles. It’s really cool! I fear I’m taking too long to write it (“seriously though, does this guy even do research?”), so I wanted to write a different and much more brief posting. 
+&lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/Deck_of_Cards.pdf&quot;&gt;So here it is!&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 02 Jul 2015 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/deck-of-cards/</link>
+        <guid isPermaLink="true">silastittes.github.io/deck-of-cards/</guid>
+      </item>
+    
+      <item>
+        <title>On probability plots and R polygons</title>
+        <description>&lt;p&gt;My first real blog post using jekyll. That was pretty fun! &lt;a href=&quot;https://docs.google.com/viewer?url=https://github.com/silastittes/silastittes.github.io/raw/master/myPDFs/probPlotNorm.pdf&quot;&gt;Here I discuss some ideas&lt;/a&gt; I’ve had recently about probability plots. Mainly an exercise in data visualization.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 14 Jun 2015 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/probability-and-polygons/</link>
+        <guid isPermaLink="true">silastittes.github.io/probability-and-polygons/</guid>
+      </item>
+    
+      <item>
+        <title>Don't hyde from jekyll.</title>
+        <description>&lt;p&gt;Wow. Getting started with jekyll takes some front work, but I’m pretty excited to start this adventure into blogging like a hacker. Huge thanks to Barry Clark (and friends?) for making the &lt;a href=&quot;https://github.com/barryclark/jekyll-now&quot;&gt;jekyll-now&lt;/a&gt; git hub repository! I would still be stuck at square one without that repo.&lt;/p&gt;
+</description>
+        <pubDate>Sat, 13 Jun 2015 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/firstPost/</link>
+        <guid isPermaLink="true">silastittes.github.io/firstPost/</guid>
+      </item>
+    
+  </channel>
+</rss>

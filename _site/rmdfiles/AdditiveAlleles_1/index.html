@@ -1,0 +1,121 @@
+<h2 id="history">History</h2>
+
+<p>My 3rd semester exam reading list includes <em>The origins of theoretical population genetics</em> [@provine_origins_2001], a fantastic little text that provides a historical account from Darwin up to the modern synthesis. One of the central ideas Provine returns to frequently (and rightly so) is the conflict between the biometricians (Karl Pearson) and the Mendelians (William Bateson) concerning the nature of inheritance of phenotypes and the resulting dynamics of evolution and natural selection: does evolution happen continuously with slight modifications over time, as Darwin had proposed, or does evolution occur in larger discontinuous jumps, as the rediscovery of Mendel’s principles seemingly suggested? Depending on where one looked, support for both the biometrical and Mendelian points of view were supported. For example, when short and tall plants of the same species are crossed, any one offspring might be intermediate in stature, and looking at all the offspring, one might observe a spectrum of heights spanning the two parent heights. However, one could also observe from the same cross that the flower petals of the offspring were always one parent color or the other, but not intermediate, as with the heights. Was there truly a pluralistic duality at play, or was there some unknown unifying explanation? The answer is the latter, and as Provine explains, the scholarly contempt that the biometricians and Mendelians held for each other stalled the solution for something like 15 years. It wasn’t until R.A. Fisher, with all his mathematical prowess, that we now have a satisfying answer given in his 3,000+ cited paper, <em>The Correlation between Relatives on the Supposition of Mendelian Inheritance</em> [@fisher_correlation_1919].</p>
+
+<p>Frankly, I haven’t read Fisher’s paper in any depth, and I don’t know how much I could understand if I did. According to the Wikipedia page about the article, Punnett and Pearson refereed the paper, but had “reservations” about accepting it because of their own lack of expertise. If they didn’t get it, I don’t hold out too much hope for myself at this point in my education (I’ll get there. We’ll all get there). None the less, I wrote this blog post to explore how the many alleles, assorting independently and making an additive contribution to a single trait, can result in a near-continuously distributed gradient of phenotypes. As usual, I’m awestruck at the ease of doing simulations in R (I often wonder how Fisher, Wright, and Haldane would have felt about the degree of modern reliance on computers for our work, and how much they themselves would have partaken).</p>
+
+<h2 id="bad-ta">Bad TA</h2>
+
+<p>I recently finished TAing Genetic for the summer. We discussed continuous traits that are a consequence of many loci acting additively. We discussed the equation, $p = 2n + 1$, where p is the number of phenotypic classes and n is the number of loci. I did my best to explain this equation by making a branching diagram and recording a table of how many more unique phenotypes there are for each locus added. This went okay, but I didn’t feel this really got the point across, so for funsies, I tried explain using R. Without fail there is at least one student who loves R. She will get something out of the demonstration, but the other 80-90% of the class will role their eyes and space-out. My department has really pushed to make using R one of the take-home skills for undergraduates. There’s still a lot of reluctance, but coding is hip and students (myself included) are realizing it’s a very marketable skill.</p>
+
+<p>My code has gone through several iterations. What I presented to the class was very different from what I have below. This code is the fastest, and most effective demonstration of using R (or at least as effectively as I can use it). The speed and brevity of the code below has two costs: connection to biological process, and flexibility. By making it run quick and relying a little more on math, the code doesn’t obviously resemble the process of sampling gametes, so is less educational for students interested in the biology, but are unfamiliar with some basic probability. Secondly, some simplifying assumptions have to be made, which I’ll explain more below, and these assumptions make it harder to explore when and how exceptions arise, and how this process changes over time due to sampling error (drift). I will write another blog post that explores these ideas…one day.</p>
+
+<h2 id="funsies">Funsies</h2>
+
+<p>I have simple goal in mind – connect Mendel’s principles of inheritance that apply to individual loci, and demonstrate how many independently assorting loci result in a near-continuous gradient of phenotypic classes. I’ve separated this into two parts: determining the number and frequency of unique trait values, and determining what the trait values actually are. For this post, let’s assume each locus that contributes to the trait of interest has two alleles that add a different amount to the overall phenotype, and that the same two alleles “types” occur at every locus. Finally, as mentioned, each locus assort independently from all the others – as if each locus were on a separate chromosome.</p>
+
+<p>There are many possible combinations of alleles at each locus. If two heterozygous individuals are crossed, from Mendel’s rules at a single locus with two alleles (let’s call them R and r to be weird), we know the genotypes and genotypic frequencies are:</p>
+
+<p>$1/4 RR$</p>
+
+<p>$2/4 Rr$</p>
+
+<p>$1/4 rr$</p>
+
+<p>Now let’s assume that the alleles, R and r, correspond to a quantitative value that contributes to a quantitative trait like height. We’ll say, R contributes 10 units and r contributes 1. So now the frequencies and values of each phenotypic class are</p>
+
+<p>$1/4 RR = R + R = 10 + 10 = 20$</p>
+
+<p>$2/4 Rr = R + r = 10 + 1 = 11$</p>
+
+<p>$1/4 rr = r + r = 1 + 1 = 2$</p>
+
+<p>With more loci, there are of course more possibilities and more variations in the phenotypic classes because we add each allele’s value to the overall phenotype, which is where I turn to now. An intuitive way to think about it, as long as there are only two alleles, no matter how many loci there are, there will only be one way to make each of the two totally homozygous genotypes. Now, think about how many ways you can make a genotype that is completely homozygous except for one allele at a locus. Then think about the same, but with two exceptions to being homozygous, then three, then four, and so one until you run out of exceptions and you’ve reached the other homozygous genotype. If you are familiar with combinatorics, statistics, or probability, you’ve probably been introduced to the binomial distribution, and with it the binomial coefficient, and hearing the description above (adding another exception and so on), should remind you of the binomial coefficient, which describes the total number of ways to get a particular combination of binary events. We can use the binomial coefficient to tell us the expected frequency of each genotype given any number of loci as follows:</p>
+
+<p>$p_i = \frac { {n \choose x_i} } { \sum_{i=0}^{n} {n \choose x_i} }$</p>
+
+<p>where,</p>
+
+<p>$i = {0, 1, 2, …, n}$,</p>
+
+<p>which can be thought of as the number of R alleles for the overall genotypic class $p$, and that all contribute the same amount.</p>
+
+<p>Further,</p>
+
+<p>${n \choose x_i} = \frac{n!}{x_i!(n-x_i)!}$</p>
+
+<p>and $n$ is the total number of alleles, or 2 times the number of loci.</p>
+
+<p>The binomial coefficient provides the frequency of each possible genotype, and we can also calculate each of the unique quantitative phenotypic values that result from the genotypes. Since we already know the frequency that each genotype will occur, we don’t need to track every way to get a particular genotype, we just need to get every unique genotype, which will give us the unique phenotypes. To get each unique phenotypic class, we can us the following:</p>
+
+<p>$P_i = i(R) + (n - i)(r)$,</p>
+
+<p>where again,
+$i = {0, 1, 2, …, n}$</p>
+
+<p>This says we simply need to know how many of each allele type is present in a given genotype to calculate the phenotype, and that each class will be. if $i = 0$, then all the alleles of the genotype are type $r$, and we can multiple the number of $r$ alleles present to get the phenotype. We know very well that the multiple alleles that contribute to a quantitative trait do not contribute the same amount. Often times we find a few loci of large effect and many more loci of small effect. The main reason for making these assumption is simplifying the math, while still maintaining the necessary ingredients to get a meaningful result (arguably). As mentioned, I will explore the fun stuff in the next blog post.</p>
+
+<p>Most the hard work is done, now it’s just a matter of translating the simple math into R:</p>
+
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">pheno.dist</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">n.loci</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">allele.types</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">n.alleles</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n.loci</span><span class="w">  </span><span class="c1">#2 alleles for each locus
+</span><span class="w">    </span><span class="c1"># calculate the frequencies of
+</span><span class="w">    </span><span class="c1"># each genotype binomial
+</span><span class="w">    </span><span class="c1"># coefficent, starting with
+</span><span class="w">    </span><span class="c1"># zero copies of R, going to
+</span><span class="w">    </span><span class="c1"># nothing but copies of R
+</span><span class="w">    </span><span class="n">class.counts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">choose</span><span class="p">(</span><span class="n">n.alleles</span><span class="p">,</span><span class="w"> 
+        </span><span class="m">0</span><span class="o">:</span><span class="n">n.alleles</span><span class="p">)</span><span class="w">
+    </span><span class="c1"># turn counts into proportions
+</span><span class="w">    </span><span class="n">class.freqs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">class.counts</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">class.counts</span><span class="p">)</span><span class="w">
+    
+    </span><span class="c1"># calculate the phenotypic
+</span><span class="w">    </span><span class="c1"># value for each genotype
+</span><span class="w">    </span><span class="n">class.types</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NULL</span><span class="w">  </span><span class="c1">#storage
+</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="n">n.alleles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="c1"># from no R alleles to all R
+</span><span class="w">        </span><span class="c1"># alleles number of R alleles
+</span><span class="w">        </span><span class="c1"># times value of R + number of
+</span><span class="w">        </span><span class="c1"># r allels times their value
+</span><span class="w">        </span><span class="n">type</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">allele.types</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+            </span><span class="p">(</span><span class="n">n.alleles</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">allele.types</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w">
+        </span><span class="n">class.types</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">class.types</span><span class="p">,</span><span class="w"> 
+            </span><span class="n">type</span><span class="p">)</span><span class="w">  </span><span class="c1">#add to storage
+</span><span class="w">    </span><span class="p">}</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">class.types</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">class.types</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">class.freqs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">class.freqs</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">class.counts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">class.counts</span><span class="p">))</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">n.loci</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">100</span><span class="w">  </span><span class="c1">#choose the number of loci
+</span><span class="n">allele.types</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">  </span><span class="c1">#choose the allelic contributions
+</span><span class="n">allele.diff</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">abs</span><span class="p">(</span><span class="n">allele.types</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> 
+    </span><span class="n">allele.types</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="w">
+</span><span class="n">out</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pheno.dist</span><span class="p">(</span><span class="n">n.loci</span><span class="p">,</span><span class="w"> </span><span class="n">allele.types</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># visualize, gotta love that,
+# type='h' option
+</span><span class="n">plot</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">class.types</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="o">$</span><span class="n">class.freqs</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"h"</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Frequency of phenotypic class"</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Phenotypic classes"</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># See what a normal
+# distribution looks like on
+# top of the
+</span><span class="n">avg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">class.types</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out</span><span class="o">$</span><span class="n">class.freqs</span><span class="p">)</span><span class="w">
+</span><span class="n">stdev</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">sum</span><span class="p">(((</span><span class="n">out</span><span class="o">$</span><span class="n">class.types</span><span class="w"> </span><span class="o">-</span><span class="w"> 
+    </span><span class="n">avg</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out</span><span class="o">$</span><span class="n">class.freqs</span><span class="p">)))</span><span class="w">
+</span><span class="n">lines</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">class.types</span><span class="p">,</span><span class="w"> </span><span class="n">dnorm</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">class.types</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">avg</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stdev</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"red"</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
+
+<p><img src="/figure/./AdditiveAlleles_1/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" /></p>
+
+<p>Here I used 20 loci, but really any number is possible, and it’s fun to see how the frequency distribution changes as a consequence. The red line shows the would-be normal distribution of the data, which doesn’t match the data all that well. I think the two reasons the normal distribution doesn’t match the data are that the phenotypic classes are discrete, so that a lot of density is included in each class that would be dispersed in the infinite number of neighboring classes. Secondly, the phenotypic class distribution is truncated relative to the normal, so more that there is “too much” density near the mean. These are just intuitive guesses I’m making in place of a firmer understanding of the math. It could be that the data simply follows a different distribution, but it seems like an discrete approximate to me.</p>
+
+<p>The code above runs fast, but is limited. Next time I will write about a different simulation that explores multiple loci that contribute different amounts to the phenotype, as well as the affects of drift over multiple generations. Funsies.</p>
+
+<p>References</p>
