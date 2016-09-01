@@ -97,7 +97,7 @@ calls in an effort to replicate nested loop structures. I thought I would
 compare a nested loop and a nested <code class="highlighter-rouge">lapply()</code> call side-by-side to see how they
 compare in syntax and efficiency.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1">#vectors to loop over
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="c1">#vectors to loop over
 </span><span class="n">x_vec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="w"> </span><span class="c1">#change size to see differences in process time
 </span><span class="n">y_vec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">x_vec</span><span class="w">
 
@@ -120,14 +120,22 @@ compare in syntax and efficiency.</p>
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">))})</span><span class="w">
 </span><span class="n">apply_time</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Sys.time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">c_time</span><span class="w">
 
-</span><span class="n">loop_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">apply_time</span></code></pre></figure>
+</span><span class="n">loop_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">apply_time</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -4.529953e-05 secs</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## Time difference of 0.001113653 secs
+</code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1">#is the same output is produced?
-</span><span class="n">mean</span><span class="p">(</span><span class="n">storage_loop</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">storage_apply</span><span class="p">)</span></code></pre></figure>
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="c1">#is the same output is produced?
+</span><span class="n">mean</span><span class="p">(</span><span class="n">storage_loop</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">storage_apply</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] 1</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 1
+</code></pre>
+</div>
 
 <p>This is obviously an overly simplistic example, but I think it demonstrates the 
 syntax and efficiency differences quite well. Replacing <code class="highlighter-rouge">paste()</code> with something 
@@ -142,7 +150,7 @@ input/output options with <code class="highlighter-rouge">apply</code>, which is
 
 <p>For example, if we wanted to output a linear 1 x n instead of matrix:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1">#changed storage to 1d array, changed the length from n by n to n*n
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="c1">#changed storage to 1d array, changed the length from n by n to n*n
 #added counter to keep track of storage vector index
 </span><span class="n">storage_loop</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">array</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">x_vec</span><span class="p">)</span><span class="o">*</span><span class="nf">length</span><span class="p">(</span><span class="n">y_vec</span><span class="p">))</span><span class="w">
 </span><span class="c1">#set_along, following Wickham suggestion
@@ -162,9 +170,13 @@ input/output options with <code class="highlighter-rouge">apply</code>, which is
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))}))</span><span class="w">
 
 </span><span class="c1">#is the same output is produced?
-</span><span class="n">mean</span><span class="p">(</span><span class="n">storage_loop</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">storage_apply</span><span class="p">)</span></code></pre></figure>
+</span><span class="n">mean</span><span class="p">(</span><span class="n">storage_loop</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">storage_apply</span><span class="p">)</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] 1</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 1
+</code></pre>
+</div>
 
 <p>There may not be many reasons to do this, but it shows the ease of changing 
 the structure of the data output from the <code class="highlighter-rouge">lapply()</code>/<code class="highlighter-rouge">sapply()</code> call compared 
@@ -172,15 +184,17 @@ to the loop. Not to mention, you can create all sorts of other list structures
 with calls to <code class="highlighter-rouge">apply</code>. These can be useful depending on downstream 
 applications. all by changing between <code class="highlighter-rouge">sapply()</code> and <code class="highlighter-rouge">lapply()</code>.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
                         </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">y_vec</span><span class="p">),</span><span class="w"> 
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))})</span><span class="w">
 
 
 </span><span class="c1">#just the first chunk
-</span><span class="n">storage_apply</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span></code></pre></figure>
+</span><span class="n">storage_apply</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## [[1]]
+<div class="highlighter-rouge"><pre class="highlight"><code>## [[1]]
 ## [1] "1 1"
 ## 
 ## [[2]]
@@ -193,37 +207,51 @@ applications. all by changing between <code class="highlighter-rouge">sapply()</
 ## [1] "1 4"
 ## 
 ## [[5]]
-## [1] "1 5"</code></pre></figure>
+## [1] "1 5"
+</code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
                         </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">y_vec</span><span class="p">),</span><span class="w"> 
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))})</span><span class="w">
-</span><span class="n">storage_apply</span></code></pre></figure>
+</span><span class="n">storage_apply</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">##      [,1]  [,2]  [,3]  [,4]  [,5] 
+<div class="highlighter-rouge"><pre class="highlight"><code>##      [,1]  [,2]  [,3]  [,4]  [,5] 
 ## [1,] "1 1" "2 1" "3 1" "4 1" "5 1"
 ## [2,] "1 2" "2 2" "3 2" "4 2" "5 2"
 ## [3,] "1 3" "2 3" "3 3" "4 3" "5 3"
 ## [4,] "1 4" "2 4" "3 4" "4 4" "5 4"
-## [5,] "1 5" "2 5" "3 5" "4 5" "5 5"</code></pre></figure>
+## [5,] "1 5" "2 5" "3 5" "4 5" "5 5"
+</code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">storage_apply</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">x_vec</span><span class="p">),</span><span class="w"> 
                         </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="n">sapply</span><span class="p">(</span><span class="n">as.list</span><span class="p">(</span><span class="n">y_vec</span><span class="p">),</span><span class="w"> 
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))})</span><span class="w">
-</span><span class="n">storage_apply</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span></code></pre></figure>
+</span><span class="n">storage_apply</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] "1 1" "1 2" "1 3" "1 4" "1 5"</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "1 1" "1 2" "1 3" "1 4" "1 5"
+</code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">storage_apply</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span></code></pre></figure>
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">storage_apply</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## [1] "2 1" "2 2" "2 3" "2 4" "2 5"</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] "2 1" "2 2" "2 3" "2 4" "2 5"
+</code></pre>
+</div>
 
 <p>Lastly, if you have a multi-core machine, you can speed up calls to <code class="highlighter-rouge">apply</code> with 
 the <code class="highlighter-rouge">parallel</code> package without any extra work (unless you count typing 
 “library(parallel)” and “mc”. Only do this if you have a large process though,
 as there is a bit of a ``start up’’ cost.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">parallel</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">parallel</span><span class="p">)</span><span class="w">
 
 </span><span class="c1">#vectors to loop over
 </span><span class="n">x_vec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="c1">#00 #change size to see differences in process time
@@ -241,9 +269,13 @@ as there is a bit of a ``start up’’ cost.</p>
                                            </span><span class="k">function</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="n">paste</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">))})</span><span class="w">
 </span><span class="n">mcapply_time</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Sys.time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">c_time</span><span class="w">
 
-</span><span class="n">apply_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mcapply_time</span></code></pre></figure>
+</span><span class="n">apply_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mcapply_time</span><span class="w">
+</span></code></pre>
+</div>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">## Time difference of -0.005709171 secs</code></pre></figure>
+<div class="highlighter-rouge"><pre class="highlight"><code>## Time difference of -0.00698328 secs
+</code></pre>
+</div>
 
 <p>Here is a summary of my current feelings about for loops version functional 
 programming approaches:</p>
@@ -252,22 +284,22 @@ programming approaches:</p>
   <thead>
     <tr>
       <th style="text-align: center"> </th>
-      <th style="text-align: center">pro for loop</th>
-      <th style="text-align: center">con for loop</th>
-      <th style="text-align: center">pro apply</th>
-      <th style="text-align: center">con apply</th>
+      <th style="text-align: center"><strong>pro for loop</strong></th>
+      <th style="text-align: center"><strong>con for loop</strong></th>
+      <th style="text-align: center"><strong>pro apply</strong></th>
+      <th style="text-align: center"><strong>con apply</strong></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: center">Syntax</td>
+      <td style="text-align: center"><strong>Syntax</strong></td>
       <td style="text-align: center">Straight forward, similar across programming languages. Not unpleasant to look at. Easier to make one-off test cases to ensure the script does what you intended.</td>
       <td style="text-align: center">Requires more typing. Requires explicitly allotting storage.</td>
       <td style="text-align: center">Far more compact.</td>
       <td style="text-align: center">Sometimes difficult to write and interpret. Hard to make “pretty” especially with anonymous function calls. Less dealing with storage.</td>
     </tr>
     <tr>
-      <td style="text-align: center">Comp. Efficiency</td>
+      <td style="text-align: center"><strong>Computational Efficiency</strong></td>
       <td style="text-align: center"> </td>
       <td style="text-align: center">slow</td>
       <td style="text-align: center">fast! parallelizable. Even faster! (sometimes)</td>
