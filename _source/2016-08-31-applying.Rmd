@@ -154,8 +154,8 @@ programming approaches:
 
 |        | **pro for loop** | **con for loop** | **pro apply** | **con apply** | 
 |:------:|:----------------:|:----------------:|:-------------:|:-------------:|
-| **Syntax**    | Straight forward, similar across programming languages. Not unpleasant to look at. Easier to make one-off test cases to ensure the script does what you intended. | Requires more typing. Requires explicitly allotting storage. | Far more compact. | Sometimes difficult to write and interpret. Hard to make "pretty" especially with anonymous function calls. Less dealing with storage. |
-| **Computational Efficiency** | | slow | fast! parallelizable. Even faster! (sometimes) |  |
+| **Syntax**    | Straight forward, similar across programming languages. Not unpleasant to look at. Easier to make one-off test cases to ensure the script does what you intended. | Requires more typing. Requires explicitly allotting storage. | Far more compact. | Sometimes difficult to write and interpret. Hard to make "pretty" especially with anonymous function calls. Less dealing with storage. 		|
+| **Computational Efficiency** | | *slow* | fast! parallelizable. Even faster! (sometimes) |  |
 
 
 In summary, if you're new to programming and using `R`, learn how to use loop 
