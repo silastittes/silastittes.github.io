@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Another blog post about the apply function"
+title:  "Another one of those blog posts about the apply function"
 ---
 
 The most excellent Hadley Wickham has a [great presentation](https://www.youtube.com/watch?v=GyNqlOjhPCQ) about functional 
