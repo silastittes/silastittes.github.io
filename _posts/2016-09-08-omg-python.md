@@ -18,20 +18,25 @@ running `Python` code blocks, and with a little magic, even lets you include
 
 
 ```python
-#demo 1
 def hello( nombre ):
-  print "hello" + nombre
+  print "hello, " + nombre
 
-hello("python")
+hello("Python")
+```
 
+```
+## hello, Python
+```
+
+
+
+
+```python
 import matplotlib.pyplot as plt
-plt.plot([1,2,3,4])
-plt.ylabel('some numbers')
+plt.plot([1,3,2,4])
+plt.ylabel("no labels for you either")
+plt.xlabel("no labels for you")
 plt.savefig('../figures/pyTest.png', bbox_inches='tight')
-```
-
-```
-## hellopython
 ```
 
 
