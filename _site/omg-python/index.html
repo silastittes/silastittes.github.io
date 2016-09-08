@@ -85,17 +85,27 @@ and I’ve learned some <code class="highlighter-rouge">Python</code> already, s
 running <code class="highlighter-rouge">Python</code> code blocks, and with a little magic, even lets you include 
 <code class="highlighter-rouge">matplotlib</code> graphics. So cool. Quick demo:</p>
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c">#demo 1</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span> <span class="n">nombre</span> <span class="p">):</span>
+  <span class="k">print</span> <span class="s">"hello"</span> <span class="o">+</span> <span class="n">nombre</span>
+
+<span class="n">hello</span><span class="p">(</span><span class="s">"python"</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'some numbers'</span><span class="p">)</span>
-<span class="c">#plt.show()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'../figures/pyTest.png'</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">'tight'</span><span class="p">)</span>
+</code></pre>
+</div>
 
-<span class="c">#plt.savefig('../figures/pyTest.png', bbox_inches='tight')</span>
+<div class="highlighter-rouge"><pre class="highlight"><code>## hellopython
 </code></pre>
 </div>
 
 <p><img src="http://tinyurl.com/js6htzm" alt="output" /></p>
 
+<p>As usual, this is an exceedingly simple example, but pretty great. Perhaps in future 
+posts I’ll compare glm syntax in <code class="highlighter-rouge">R</code> and <code class="highlighter-rouge">Python</code>.</p>
 
   </div>
 

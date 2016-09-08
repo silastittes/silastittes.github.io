@@ -18,15 +18,25 @@ running `Python` code blocks, and with a little magic, even lets you include
 
 
 ```python
+#demo 1
+def hello( nombre ):
+  print "hello" + nombre
+
+hello("python")
+
 import matplotlib.pyplot as plt
 plt.plot([1,2,3,4])
 plt.ylabel('some numbers')
-#plt.show()
+plt.savefig('../figures/pyTest.png', bbox_inches='tight')
+```
 
-#plt.savefig('../figures/pyTest.png', bbox_inches='tight')
+```
+## hellopython
 ```
 
 
 ![output](http://tinyurl.com/js6htzm)
 
 
+As usual, this is an exceedingly simple example, but pretty great. Perhaps in future 
+posts I'll compare glm syntax in `R` and `Python`.
