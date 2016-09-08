@@ -42,8 +42,13 @@ running &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; code
 
 &lt;p&gt;&lt;img src=&quot;http://tinyurl.com/js6htzm&quot; alt=&quot;output&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;As usual, this is an exceedingly simple example, but pretty great. Perhaps in future 
-posts I’ll compare glm syntax in &lt;code class=&quot;highlighter-rouge&quot;&gt;R&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;As usual, this is an exceedingly simple example, but pretty great. Perhaps even more 
+exciting is the massive list of 
+&lt;a href=&quot;http://yihui.name/knitr/demo/engines/&quot;&gt;other language options&lt;/a&gt; 
+you can choose from as the engine.&lt;/p&gt;
+
+&lt;p&gt;In future posts I’ll compare glm syntax in &lt;code class=&quot;highlighter-rouge&quot;&gt;R&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt;. 
+Over and out.&lt;/p&gt;
 </description>
         <pubDate>Thu, 08 Sep 2016 00:00:00 -0600</pubDate>
         <link>silastittes.github.io/omg-python/</link>

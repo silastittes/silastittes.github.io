@@ -43,5 +43,10 @@ plt.savefig('../figures/pyTest.png', bbox_inches='tight')
 ![output](http://tinyurl.com/js6htzm)
 
 
-As usual, this is an exceedingly simple example, but pretty great. Perhaps in future 
-posts I'll compare glm syntax in `R` and `Python`.
+As usual, this is an exceedingly simple example, but pretty great. Perhaps even more 
+exciting is the massive list of 
+[other language options](http://yihui.name/knitr/demo/engines/) 
+you can choose from as the engine.
+
+In future posts I'll compare glm syntax in `R` and `Python`. 
+Over and out.
