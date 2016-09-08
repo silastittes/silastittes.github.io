@@ -7,6 +7,38 @@
     <atom:link href="silastittes.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>omg python in rmd</title>
+        <description>&lt;p&gt;Learning data analysis in &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; seems to be an important skill. Speed and 
+scalability are the obvious reasons. &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; has a reputation for being the 
+Machine Learning go-to language, despite the fact that (as far as I can tell) 
+&lt;a href=&quot;http://tinyurl.com/lcashjn&quot;&gt;some of the real giants in the field&lt;/a&gt; 
+create packages and run 
+&lt;a href=&quot;http://tinyurl.com/ht9gj5c&quot;&gt;their analysis in &lt;code class=&quot;highlighter-rouge&quot;&gt;R&lt;/code&gt;&lt;/a&gt; (awesome mooc, btw). Despite
+my deep and passionate love for &lt;code class=&quot;highlighter-rouge&quot;&gt;R&lt;/code&gt;, I’m all about programming bandwagons, 
+and I’ve learned some &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; already, so what the heck.&lt;/p&gt;
+
+&lt;p&gt;I’m writing this post out of utter excitement that R Markdown is capable of 
+running &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; code blocks, and with a little magic, even lets you include 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;matplotlib&lt;/code&gt; graphics. So cool. Quick demo:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;plt&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'some numbers'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#plt.show()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#plt.savefig('../figures/pyTest.png', bbox_inches='tight')&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://tinyurl.com/js6htzm&quot; alt=&quot;output&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 08 Sep 2016 00:00:00 -0600</pubDate>
+        <link>silastittes.github.io/omg-python/</link>
+        <guid isPermaLink="true">silastittes.github.io/omg-python/</guid>
+      </item>
+    
+      <item>
         <title>Another one of those blog posts about the apply function</title>
         <description>&lt;p&gt;The most excellent Hadley Wickham has a &lt;a href=&quot;https://www.youtube.com/watch?v=GyNqlOjhPCQ&quot;&gt;great presentation&lt;/a&gt; about functional 
 programming where he compares the redundancies in cupcake recipes to the 
