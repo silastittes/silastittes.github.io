@@ -1,6 +1,7 @@
 ---
+title: "omg python in rmd"
+output: pdf_document
 layout: post
-title:  "omg python in rmd"
 ---
 
 Learning data analysis in `Python` seems to be an important skill. Speed and 
