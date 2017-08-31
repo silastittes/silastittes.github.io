@@ -78,7 +78,10 @@ stan_string <- "
     target += exponential_lpdf(y | beta);
   }
 "
+```
 
+
+```{r, results='hide', message=FALSE, warning=FALSE}
 stan_exp <- invisible(stan_model(model_code=stan_string))
 ```
 

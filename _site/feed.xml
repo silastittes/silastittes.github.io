@@ -75,25 +75,11 @@
     target += exponential_lpdf(y | beta);
   }
 &quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stan_exp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;invisible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stan_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stan_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## In file included from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
-##                  from /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
-##                  from filea2279816380.cpp:8:
-## /home/silastittes/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
-##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
-##  ^
-## &amp;lt;command-line&amp;gt;:0:0: note: this is the location of the previous definition
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;stan_exp&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;invisible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stan_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stan_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is small, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences our to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).&lt;/p&gt;
@@ -105,7 +91,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-6-1.png&quot; title=&quot;plot of chunk unnamed-chunk-6&quot; alt=&quot;plot of chunk unnamed-chunk-6&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-7-1.png&quot; title=&quot;plot of chunk unnamed-chunk-7&quot; alt=&quot;plot of chunk unnamed-chunk-7&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Bundle the data and run Stan.&lt;/p&gt;
 
@@ -130,10 +116,10 @@
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1400    1
-## lp__ -82.15    0.02 0.67 -84.07 -82.33 -81.89 -81.71 -81.65  1885    1
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1636    1
+## lp__ -82.17    0.02 0.71 -84.30 -82.37 -81.90 -81.70 -81.65  1784    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Aug 31 00:44:22 2017.
+## Samples were drawn using NUTS(diag_e) at Thu Aug 31 00:49:41 2017.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -144,7 +130,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-7-1.png&quot; title=&quot;Traceplot looks nice and grassy.&quot; alt=&quot;Traceplot looks nice and grassy.&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-8-1.png&quot; title=&quot;Traceplot looks nice and grassy.&quot; alt=&quot;Traceplot looks nice and grassy.&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is a tiny model that runs quite quickly. The default of 4000 iterations and 50% warm up is probably more than necessary, but the number of effective samples is good, as are the rhat values being 1. The traceplot looks nice and grassy, without any indications the chains are getting stuck on parameter values. The model returns a few warnings about boundaries, but this is not a concern (as the message itself says).&lt;/p&gt;
 
@@ -161,7 +147,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-8-1.png&quot; title=&quot;plot of chunk unnamed-chunk-8&quot; alt=&quot;plot of chunk unnamed-chunk-8&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-9-1.png&quot; title=&quot;plot of chunk unnamed-chunk-9&quot; alt=&quot;plot of chunk unnamed-chunk-9&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Compute credible interval of expected wait time&lt;/p&gt;
 
@@ -171,11 +157,11 @@
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##     2.5%    97.5% 
-## 22.83755 56.49961
+## 22.52135 58.07670
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 56 seconds.&lt;/p&gt;
+&lt;p&gt;So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 58 seconds.&lt;/p&gt;
 
 &lt;p&gt;We can also easily see the probability that the expected wait time is less than, say, one minute.&lt;/p&gt;
 
@@ -183,7 +169,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.984
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.9815
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -196,17 +182,17 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-11-1.png&quot; title=&quot;plot of chunk unnamed-chunk-11&quot; alt=&quot;plot of chunk unnamed-chunk-11&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-12-1.png&quot; title=&quot;plot of chunk unnamed-chunk-12&quot; alt=&quot;plot of chunk unnamed-chunk-12&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pred_var&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wt_times&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.23225
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.214
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;There’s a ~0.23% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.&lt;/p&gt;
+&lt;p&gt;There’s a ~0.21% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.&lt;/p&gt;
 
 &lt;p&gt;We can also visually assess the simulated and observed distribution shapes by constructing quantile-quantile plots. I find it a bit easier to see departures by looking at the observed quantiles versus the difference in observed and simulated quantiles:&lt;/p&gt;
 
@@ -226,7 +212,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-12-1.png&quot; title=&quot;plot of chunk unnamed-chunk-12&quot; alt=&quot;plot of chunk unnamed-chunk-12&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-13-1.png&quot; title=&quot;plot of chunk unnamed-chunk-13&quot; alt=&quot;plot of chunk unnamed-chunk-13&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Ideally, the shape should be relatively flat and centered on zero. The high end gets a little squirrelly, but overall this looks pretty good. The replicated draws to encapsulate zero. We confirm the exponential model isn’t too bad.&lt;/p&gt;
 
@@ -238,14 +224,14 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-13-1.png&quot; title=&quot;plot of chunk unnamed-chunk-13&quot; alt=&quot;plot of chunk unnamed-chunk-13&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-14-1.png&quot; title=&quot;plot of chunk unnamed-chunk-14&quot; alt=&quot;plot of chunk unnamed-chunk-14&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;quantile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pred_max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.025&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.975&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##      2.5%     97.5% 
-## 0.8555985 4.3690368
+## 0.8201933 4.3392904
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -265,7 +251,7 @@ Let’s see how the approximate confidence interval for the expected wait time f
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-14-1.png&quot; title=&quot;plot of chunk unnamed-chunk-14&quot; alt=&quot;plot of chunk unnamed-chunk-14&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-15-1.png&quot; title=&quot;plot of chunk unnamed-chunk-15&quot; alt=&quot;plot of chunk unnamed-chunk-15&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;qnts&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;length.out&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;quantile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;boots&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.025&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.975&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -273,7 +259,7 @@ Let’s see how the approximate confidence interval for the expected wait time f
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##     2.5%    97.5% 
-## 18.47059 57.05882
+## 17.76471 56.88235
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -282,7 +268,7 @@ Let’s see how the approximate confidence interval for the expected wait time f
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-14-2.png&quot; title=&quot;plot of chunk unnamed-chunk-14&quot; alt=&quot;plot of chunk unnamed-chunk-14&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/figure/source/2017-08-30-Prius/unnamed-chunk-15-2.png&quot; title=&quot;plot of chunk unnamed-chunk-15&quot; alt=&quot;plot of chunk unnamed-chunk-15&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The intervals and qqplot both indicate similar predictions, the credible interval is slightly narrower.&lt;/p&gt;
 
