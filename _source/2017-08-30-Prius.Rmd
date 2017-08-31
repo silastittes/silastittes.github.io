@@ -187,7 +187,7 @@ pred_quants %>% ggplot(aes(x = obs_quants, y = quants - obs_quants, group = draw
   geom_hline(yintercept = 0) +
   theme_minimal() +
   ylab("Simulated - observed quantiles") +
-  xlab("Observed quantiles")
+  xlab("Observed quantiles") +
   theme(text = element_text(size=20))
 
 ```

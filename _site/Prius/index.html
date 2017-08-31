@@ -170,10 +170,10 @@
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1534    1
-## lp__ -82.17    0.02 0.76 -84.27 -82.34 -81.87 -81.70 -81.65  1669    1
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1343    1
+## lp__ -82.15    0.02 0.69 -84.12 -82.32 -81.88 -81.70 -81.65  1881    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Aug 31 01:08:20 2017.
+## Samples were drawn using NUTS(diag_e) at Thu Aug 31 01:15:22 2017.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -213,11 +213,11 @@
 </div>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 22.34643 58.51085
+## 22.40362 56.17432
 </code></pre>
 </div>
 
-<p>So there’s a 95% chance the expected wait time between Prius spottings is between 22 and 59 seconds.</p>
+<p>So there’s a 95% chance the expected wait time between Prius spottings is between 22 and 56 seconds.</p>
 
 <p>We can also easily see the probability that the expected wait time is less than, say, one minute.</p>
 
@@ -225,7 +225,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.98075
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.987
 </code></pre>
 </div>
 
@@ -246,7 +246,7 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.225
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.21575
 </code></pre>
 </div>
 
@@ -268,35 +268,12 @@
   </span><span class="n">geom_hline</span><span class="p">(</span><span class="n">yintercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">theme_minimal</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
   </span><span class="n">ylab</span><span class="p">(</span><span class="s2">"Simulated - observed quantiles"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="n">xlab</span><span class="p">(</span><span class="s2">"Observed quantiles"</span><span class="p">)</span><span class="w">
+  </span><span class="n">xlab</span><span class="p">(</span><span class="s2">"Observed quantiles"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">theme</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">20</span><span class="p">))</span><span class="w">
 </span></code></pre>
 </div>
 
 <p><img src="/figure/source/2017-08-30-Prius/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" /></p>
-
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="w">  </span><span class="n">theme</span><span class="p">(</span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">20</span><span class="p">))</span><span class="w">
-</span></code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>## List of 1
-##  $ text:List of 11
-##   ..$ family       : NULL
-##   ..$ face         : NULL
-##   ..$ colour       : NULL
-##   ..$ size         : num 20
-##   ..$ hjust        : NULL
-##   ..$ vjust        : NULL
-##   ..$ angle        : NULL
-##   ..$ lineheight   : NULL
-##   ..$ margin       : NULL
-##   ..$ debug        : NULL
-##   ..$ inherit.blank: logi FALSE
-##   ..- attr(*, "class")= chr [1:2] "element_text" "element"
-##  - attr(*, "class")= chr [1:2] "theme" "gg"
-##  - attr(*, "complete")= logi FALSE
-##  - attr(*, "validate")= logi TRUE
-</code></pre>
-</div>
 
 <p>Ideally, the shape should be relatively flat and centered on zero. The high end gets a little squirrelly, but overall this looks pretty good. The replicated draws to encapsulate zero. We confirm the exponential model isn’t too bad.</p>
 
@@ -317,8 +294,8 @@
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 0.841402 4.567670
+<div class="highlighter-rouge"><pre class="highlight"><code>##      2.5%     97.5% 
+## 0.8743111 4.4394693
 </code></pre>
 </div>
 
@@ -346,7 +323,7 @@ Let’s see how the approximate confidence interval for the expected wait time f
 </div>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 17.64706 57.29412
+## 18.11765 57.52941
 </code></pre>
 </div>
 
