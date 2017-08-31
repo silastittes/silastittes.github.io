@@ -1,6 +1,5 @@
 ---
 title: "omg python in rmd"
-output: pdf_document
 layout: post
 ---
 
