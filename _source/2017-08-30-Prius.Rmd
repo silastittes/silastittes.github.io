@@ -48,7 +48,8 @@ wt_times %>% ggplot(aes(x = wait)) +
   stat_bin(binwidth = 12, alpha = 0.5,
                  fill = "green", colour = "black") +
   xlab("Seconds between Prius sightings (Boulder, CO)") +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size=20))
 ```
 
 
@@ -92,7 +93,10 @@ Here's what this prior looks like.
 
 ```{r}
 xseq <- seq(0, 5, length.out = 100)
-plot(xseq, dgamma(xseq, shape = 1, scale = 1), type = "l", lwd = 2)
+plot(xseq, dgamma(xseq, shape = 1, scale = 1), type = "l", lwd = 2,
+     xlab = "Rate parameter",
+     ylab = "Density",
+     cex.axis = 1.25, cex.lab = 1.25)
 ```
 
 
@@ -129,7 +133,9 @@ exp_post <- extract(stan_fit)
 exp_post %>% data.frame() %>% 
   ggplot(aes(x = 1/beta))+
   geom_density(fill = "green", alpha = 0.5) +
-  theme_minimal()
+  theme_minimal() +
+  xlab("Expected wait time") +
+  theme(text = element_text(size=20))
 ```
 
 
@@ -154,8 +160,10 @@ Also valuable in a Bayesian framework is the ability to conduct posterior predic
 ```{r}
 post_pred <- exp_post$beta %>% map(~rexp(n_obs, rate = .x))
 pred_var <- post_pred %>% map_dbl(~var(.x))
-hist(pred_var)
-abline(v = var(wt_times$wait))
+hist(pred_var,main = "",
+     xlab = "Posterior predictive variance",
+     cex.axis = 1.25, cex.lab = 1.25)
+abline(v = var(wt_times$wait), lwd = 2, col = "green")
 mean(pred_var > var(wt_times$wait))
 ```
 
@@ -177,7 +185,10 @@ pred_quants <- post_pred %>% map(~{quantile(.x, prbs) }) %>%
 pred_quants %>% ggplot(aes(x = obs_quants, y = quants - obs_quants, group = draw))+
   geom_line(alpha = 0.05, colour = "green") +
   geom_hline(yintercept = 0) +
-  theme_minimal()
+  theme_minimal() +
+  ylab("Simulated - observed quantiles") +
+  xlab("Observed quantiles")
+  theme(text = element_text(size=20))
 
 ```
 
@@ -189,8 +200,11 @@ We can also get some idea of the max wait time (conditional of the data of cours
 
 ```{r}
 pred_max <- post_pred %>% map_dbl(~max(.x))
-hist(pred_max)
-abline(v = max(wt_times$wait))
+hist(pred_max, 
+     main = "",
+     xlab = "Posterior predictive maximum waits",
+     cex.axis = 1.25, cex.lab = 1.25)
+abline(v = max(wt_times$wait), lwd = 2, col = "green")
 quantile(pred_max/60, c(0.025, 0.975))
 ```
 
@@ -211,8 +225,11 @@ abline(v = mean(wt_times$wait))
 
 qnts <- seq(0,1, length.out = 100)
 quantile(boots, c(0.025, 0.975))
-qqplot(boots,1/exp_post$beta)
-abline(0,1)
+qqplot(boots,1/exp_post$beta, 
+       xlab = "Bootstrap quantiles",
+       ylab = "Bayesian quantiles", 
+       cex.axis = 1.25, cex.lab = 1.25)
+abline(0,1, col = "green", lwd = 2 )
 ```
 
 The intervals and qqplot both indicate similar predictions, the credible interval is slightly narrower.
