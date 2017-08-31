@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Prius Wait Times"
+title: "What can we learn from spotting a Prius or two?"
 ---
 
 
@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
 ```
 
 
-If you live in a wealthy, liberal town like Boulder, CO, you've likely seen your fair share of Toyota Prii (this is supposedly the plural of Prius). Heck, you might even own one. While taking my son on a walk, I decided to collect a little data. I used my iPhone stopwatch to record wait times between seeing Prii. I walked at a near-constant speed, along a more or less linear transect along 13th Street, from Arapahoe to Spruce. I recorded for 10 minutes, hitting the "lap" button each time I saw a Prius (any year, parked or driving). There is some risk of counting one vehicle multiple times, but because I walked in one direction and only recorded for 10 minutes, I assume the risk is relatively low (unless Prius owners love driving so much, they just go out and do laps around city blocks -- quite possible).
+If you live in a wealthy, liberal town like Boulder, CO, you've likely seen your fair share of Toyota Prii (this is supposedly the plural of Prius). Heck, you might even own one. I decided to collect a little data. I used my iPhone stopwatch to record wait times between seeing Prii. I walked at a near-constant speed, along a more or less linear transect along 13th Street, from Arapahoe to Spruce. I recorded for 10 minutes, hitting the "lap" button each time I saw a Prius (any year, parked or driving). There is some risk of counting one vehicle multiple times, but because I walked in one direction and only recorded for 10 minutes, I assume the risk is relatively low (unless Prius owners love driving so much, they just go out and do laps around city blocks -- quite possible).
 
 Below is some code I've thrown together to analyze the data I collected. The objective here is to predict the expected wait times between Prius sightings, and to quantify uncertainty in this expectation. Along the way, we'll check out the max time you should expect to wait, and test a few assumptions of the model.
 
@@ -39,7 +39,7 @@ wt_times <- c("00:11", "01:08", "00:06", "02:06", "00:06", "00:16",
 n_obs <- length(wt_times$wait)
 ```
 
-First observation: I saw `r n_obs` Prii in 10 minutes -- that strikes me a lot! I make no attempt to calculate the total number of Prii in Boulder from these observations, but that seems like a possible feat with some effort.
+First observation: I saw `r n_obs` Prii in 10 minutes -- that strikes me as a lot! I make no attempt to calculate the total number of Prii in Boulder from these observations, but that seems like a possible feat with some effort.
 
 Let's take a look at the distribution (it took some time, but I'm pretty solidly parked in `ggplot2` train these days).
 
@@ -51,7 +51,7 @@ wt_times %>% ggplot(aes(x = wait)) +
   theme_minimal() +
   theme(text = element_text(size=20))
 ```
-
+Figure 1. Sampled distribution of wait times.
 
 Based on the graph and similarity to other problems, it seems reasonable to assume wait times are exponentially distributed. I'll also assume that the observations are dictated by a single rate parameter (easy to imagine density of Prii vary across neighborhoods, which would violate this assumption). 
 
@@ -60,7 +60,6 @@ To be totally overkill, I'm going to fit the model using Stan, to numerically ap
 Usually I'd write the Stan code in a separate file because it makes life easier, but I'll write it directly into this post as a string to keep the post self-contained. I'm using a gamma prior for the exponential rate parameter, and I'm putting the shape and scale parameters as input to the Stan model to make assessment of prior sensitivity easier.
 
 ```{r}
-
 stan_string <- "
 
   data{
@@ -83,7 +82,7 @@ stan_string <- "
 
 
 ```{r, results='hide', message=FALSE, warning=FALSE}
-stan_exp <- invisible(stan_model(model_code=stan_string))
+stan_exp <- stan_model(model_code=stan_string)
 ```
 
 
@@ -98,11 +97,11 @@ plot(xseq, dgamma(xseq, shape = 1, scale = 1), type = "l", lwd = 2,
      ylab = "Density",
      cex.axis = 1.25, cex.lab = 1.25)
 ```
-
+Figure 2. Gamma prior for exponential rate parameter.
 
 Bundle the data and run Stan.
 
-```{r, fig.cap="Traceplot looks nice and grassy."}
+```{r}
 
 stan_in <- list(
   y = wt_times$wait,
@@ -120,6 +119,8 @@ print(stan_fit)
 
 traceplot(stan_fit)
 ```
+Figure 3. Traceplot looks nice and grassy.
+
 
 This is a tiny model that runs quite quickly. The default of 4000 iterations and 50% warm up is probably more than necessary, but the number of effective samples is good, as are the rhat values being 1. The traceplot looks nice and grassy, without any indications the chains are getting stuck on parameter values. The model returns a few warnings about boundaries, but this is not a concern (as the message itself says).
 
@@ -137,7 +138,7 @@ exp_post %>% data.frame() %>%
   xlab("Expected wait time") +
   theme(text = element_text(size=20))
 ```
-
+Figure 4. Inferred posterior distribution for exponential rate parameter.
 
 
 Compute credible interval of expected wait time
@@ -166,37 +167,12 @@ hist(pred_var,main = "",
 abline(v = var(wt_times$wait), lwd = 2, col = "green")
 mean(pred_var > var(wt_times$wait))
 ```
+Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.
 
 There's a ~`r round(mean(pred_var > var(wt_times$wait)), 2)`% probability of simulated data having variation greater than the observed. This isn't too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.
 
 
-We can also visually assess the simulated and observed distribution shapes by constructing quantile-quantile plots. I find it a bit easier to see departures by looking at the observed quantiles versus the difference in observed and simulated quantiles:
-
-```{r}
-prbs <- seq(0,1, length.out = n_obs)
-obs_quants <- quantile(wt_times$wait, prbs)
-pred_quants <- post_pred %>% map(~{quantile(.x, prbs) }) %>%
-  do.call(cbind, .) %>% 
-  data.frame() %>%
-  gather(key = "draw", "quants") %>%
-  group_by(draw) %>%
-  mutate(obs_quants = obs_quants)
-  
-pred_quants %>% ggplot(aes(x = obs_quants, y = quants - obs_quants, group = draw))+
-  geom_line(alpha = 0.05, colour = "green") +
-  geom_hline(yintercept = 0) +
-  theme_minimal() +
-  ylab("Simulated - observed quantiles") +
-  xlab("Observed quantiles") +
-  theme(text = element_text(size=20))
-
-```
-
-
-Ideally, the shape should be relatively flat and centered on zero. The high end gets a little squirrelly, but overall this looks pretty good. The replicated draws to encapsulate zero. We confirm the exponential model isn't too bad.
-
-
-We can also get some idea of the max wait time (conditional of the data of course).
+We can also get some idea of the max wait time conditional of the data.
 
 ```{r}
 pred_max <- post_pred %>% map_dbl(~max(.x))
@@ -208,7 +184,55 @@ abline(v = max(wt_times$wait), lwd = 2, col = "green")
 quantile(pred_max/60, c(0.025, 0.975))
 ```
 
-Wow, the model predicts wait times should pretty much always be less than five minutes. That's a lot of Prii are flashing past your face!
+Figure 6. Distribution of maximum wait times from posterior predictive distributions, green line is the sample maximum wait time.
+
+
+Wow, the model predicts wait times should pretty much always be less than five minutes. That's a lot of Prii flashing past your face!
+
+
+We can also visually assess the simulated and observed distribution shapes by constructing quantile-quantile plots. I find it a bit easier to see departures by looking at the observed quantiles versus the difference in observed and simulated quantiles:
+
+```{r}
+prbs <- seq(0,1, length.out = n_obs)
+obs_quants <- quantile(wt_times$wait, prbs)
+
+lev <- 0.95
+up <- 1 - (1 - lev)/2
+lo <- (1 - lev)/2
+
+pred_quants <- post_pred %>% map(~{quantile(.x, prbs) }) %>%
+  do.call(cbind, .) %>% 
+  data.frame() %>%
+  gather(key = "draw", "quants") %>%
+  group_by(draw) %>%
+  mutate(obs_quants = obs_quants) %>%
+  ungroup() %>%
+  group_by(obs_quants) %>%
+  summarise(upper = quantile(quants, up),
+            lower = quantile(quants, lo)
+            )
+
+#gross, but not sure how else to compile this for polygon
+pred_poly <-  data.frame(
+  obs_quants = c(pred_quants$obs_quants, 
+                 rev(pred_quants$obs_quants)),
+  pred_quants = c(pred_quants$upper - pred_quants$obs_quants, 
+                  rev(pred_quants$lower-pred_quants$obs_quants))
+  )
+
+pred_poly %>% ggplot(aes(x = obs_quants, y = pred_quants)) +
+  geom_polygon(alpha = 0.5, fill = "green") +
+  geom_hline(yintercept = 0, lty = 2) +
+  theme_minimal() +
+  ylab("Simulated - observed quantiles") +
+  xlab("Observed quantiles") +
+  theme(text = element_text(size=20))
+
+```
+ Figure 7. 95% credible interval for difference between posterior predictive quantiles and sample quantiles for Prius sighting wait times.
+
+
+Ideally, the shape should be relatively flat (exponential mean scales with variance, so heteroskedasticity is fine) and centered on zero. Overall this looks pretty good. The replicated draws to encapsulate zero. We confirm the exponential model isn't too bad.
 
 
 Another approach would have been to bootstrap the observations. `tidverse` makes this extra easy.
@@ -221,17 +245,27 @@ boots <- 1:1e4 %>%
   mean})
 
 hist(boots)
-abline(v = mean(wt_times$wait))
+abline(v = mean(wt_times$wait), lwd = 2, col = "green")
+```
+Figure 8. Distribution of bootstrap replicates for mean exponential wait times. Green line is sample mean (what's up with me and green today?).
 
+
+```{r}
 qnts <- seq(0,1, length.out = 100)
 quantile(boots, c(0.025, 0.975))
-qqplot(boots,1/exp_post$beta, 
+qqplot(boots, 1/exp_post$beta, 
        xlab = "Bootstrap quantiles",
        ylab = "Bayesian quantiles", 
        cex.axis = 1.25, cex.lab = 1.25)
 abline(0,1, col = "green", lwd = 2 )
 ```
 
-The intervals and qqplot both indicate similar predictions, the credible interval is slightly narrower.
+Figure 9. Bootstrap quantiles compared to posterior predictive quantiles. 1 to 1 line in green.
+
+The intervals and qqplot both indicate similar predictions, the credible interval reported above is slightly narrower.
+
+If the exponential distribution is a bad model to explain the wait times, it's difficult to tell with so few observations. Conditional on the data at hand, the exponential seems to be a good assumption. Another worthwhile predictive check would be to assess if the observations are independent of each other and consistent over time/space. Ideally, the behavior of the sampling in the data would be consistent with what an exponential distribution would produce (exchangable observations). I believe this would require some sort of quntification of autocorrelation. I will hold off on doing any of that.
 
 Probably could have stopped at the summary statistics, but either way the takehome is clear: you don't have to wait around long before seeing a Prius in Boulder.
+
+Would love to hear your thoughts on the post, any and all comments and critiques are welcome.
