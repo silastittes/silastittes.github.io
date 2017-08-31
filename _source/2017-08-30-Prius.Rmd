@@ -16,10 +16,10 @@ Below is some code I've thrown together to analyze the data I collected. The obj
 
 Load the relevant libraries:
 ```{r}
-library(magrittr)
-library(tidyverse)
-library(lubridate)
-library(rstan)
+suppressMessages(library(magrittr))
+suppressMessages(library(tidyverse))
+suppressMessages(library(lubridate))
+suppressMessages(library(rstan))
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 ```
@@ -79,7 +79,7 @@ stan_string <- "
   }
 "
 
-stan_exp <- stan_model(model_code=stan_string) 
+stan_exp <- invisible(stan_model(model_code=stan_string))
 ```
 
 
@@ -134,10 +134,11 @@ exp_post %>% data.frame() %>%
 Compute credible interval of expected wait time
 
 ```{r}
-quantile(1/exp_post$beta, c(0.025, 0.975))
+cred1 <- quantile(1/exp_post$beta, c(0.025, 0.975))
+cred1
 ```
 
-So there's a 95% chance the expected wait time between Prius spottings is 23 to 56 seconds.
+So there's a 95% chance the expected wait time between Prius spottings is between `r round(cred1[1], 0)` and `r round(cred1[2], 0)` seconds.
 
 We can also easily see the probability that the expected wait time is less than, say, one minute. 
 
