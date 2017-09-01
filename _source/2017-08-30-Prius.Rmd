@@ -169,7 +169,7 @@ mean(pred_var > var(wt_times$wait))
 ```
 Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.
 
-There's a ~`r round(mean(pred_var > var(wt_times$wait)), 2)`% probability of simulated data having variation greater than the observed. This isn't too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.
+There's a ~`r round(mean(pred_var > var(wt_times$wait)), 2)*100`% probability of simulated data having variation greater than the observed. This isn't too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.
 
 
 We can also get some idea of the max wait time conditional of the data.
