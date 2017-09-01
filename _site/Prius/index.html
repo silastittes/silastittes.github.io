@@ -134,7 +134,7 @@ Figure 1. Sampled distribution of wait times.</p>
 </span></code></pre>
 </div>
 
-<p>Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is small, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences our to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).</p>
+<p>Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is small, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).</p>
 
 <p>Here’s what this prior looks like.</p>
 
@@ -172,10 +172,10 @@ Figure 2. Gamma prior for exponential rate parameter.</p>
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1244    1
-## lp__ -82.16    0.02 0.74 -84.31 -82.30 -81.86 -81.70 -81.65  1497    1
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1516    1
+## lp__ -82.17    0.02 0.71 -84.08 -82.34 -81.90 -81.71 -81.65  1576    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Aug 31 13:46:46 2017.
+## Samples were drawn using NUTS(diag_e) at Fri Sep  1 15:23:14 2017.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -217,11 +217,11 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.</p>
 </div>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 22.62336 58.81163
+## 22.95475 58.07866
 </code></pre>
 </div>
 
-<p>So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 59 seconds.</p>
+<p>So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 58 seconds.</p>
 
 <p>We can also easily see the probability that the expected wait time is less than, say, one minute.</p>
 
@@ -229,7 +229,7 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.</p>
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.97925
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.98225
 </code></pre>
 </div>
 
@@ -250,7 +250,7 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.</p>
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.24225
+<div class="highlighter-rouge"><pre class="highlight"><code>## [1] 0.24275
 </code></pre>
 </div>
 <p>Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.</p>
@@ -274,8 +274,8 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.</p>
 </span></code></pre>
 </div>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 0.841396 4.425619
+<div class="highlighter-rouge"><pre class="highlight"><code>##      2.5%     97.5% 
+## 0.8173403 4.5141701
 </code></pre>
 </div>
 
@@ -350,7 +350,7 @@ Figure 8. Distribution of bootstrap replicates for mean exponential wait times. 
 </div>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>##     2.5%    97.5% 
-## 18.05882 57.00147
+## 18.64706 57.11912
 </code></pre>
 </div>
 
@@ -368,7 +368,7 @@ Figure 8. Distribution of bootstrap replicates for mean exponential wait times. 
 
 <p>The intervals and qqplot both indicate similar predictions, the credible interval reported above is slightly narrower.</p>
 
-<p>If the exponential distribution is a bad model to explain the wait times, it’s difficult to tell with so few observations. Conditional on the data at hand, the exponential seems to be a good assumption. Another worthwhile predictive check would be to assess if the observations are independent of each other and consistent over time/space. Ideally, the behavior of the sampling in the data would be consistent with what an exponential distribution would produce (exchangable observations). I believe this would require some sort of quntification of autocorrelation. I will hold off on doing any of that.</p>
+<p>If the exponential distribution is a bad model to explain the wait times, it’s difficult to tell with so few observations. Conditional on the data at hand, the exponential seems to be a good assumption. Another worthwhile predictive check would be to assess if the observations are independent of each other and consistent over time/space. Ideally, the behavior of the sampling in the data would be consistent with what an exponential distribution would produce (exchangeable observations). I believe this would require some sort of quantification of auto-correlation. I will hold off on doing any of that.</p>
 
 <p>Probably could have stopped at the summary statistics, but either way the takehome is clear: you don’t have to wait around long before seeing a Prius in Boulder.</p>
 
