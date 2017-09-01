@@ -84,7 +84,7 @@ Figure 1. Sampled distribution of wait times.&lt;/p&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is small, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).&lt;/p&gt;
+&lt;p&gt;Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is short, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).&lt;/p&gt;
 
 &lt;p&gt;Here’s what this prior looks like.&lt;/p&gt;
 
@@ -122,10 +122,10 @@ Figure 2. Gamma prior for exponential rate parameter.&lt;/p&gt;
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1685    1
-## lp__ -82.15    0.02 0.73 -84.07 -82.30 -81.87 -81.70 -81.65  1495    1
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1640    1
+## lp__ -82.17    0.02 0.73 -84.19 -82.35 -81.88 -81.70 -81.65  1735    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri Sep  1 15:28:30 2017.
+## Samples were drawn using NUTS(diag_e) at Fri Sep  1 15:51:52 2017.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -167,11 +167,11 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.&lt;/p&
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##     2.5%    97.5% 
-## 22.71007 56.96707
+## 23.13407 59.25229
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 57 seconds.&lt;/p&gt;
+&lt;p&gt;So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 59 seconds.&lt;/p&gt;
 
 &lt;p&gt;We can also easily see the probability that the expected wait time is less than, say, one minute.&lt;/p&gt;
 
@@ -179,7 +179,7 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.&lt;/p&
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.98275
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.97675
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -200,12 +200,12 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.&lt;/p&
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.22025
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;## [1] 0.24925
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.&lt;/p&gt;
 
-&lt;p&gt;There’s a ~22% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.&lt;/p&gt;
+&lt;p&gt;There’s a ~25% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.&lt;/p&gt;
 
 &lt;p&gt;We can also get some idea of the max wait time conditional of the data.&lt;/p&gt;
 
@@ -225,7 +225,7 @@ Figure 4. Inferred posterior distribution for exponential rate parameter.&lt;/p&
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##      2.5%     97.5% 
-## 0.8491952 4.3820713
+## 0.8249686 4.5523389
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -300,7 +300,7 @@ Figure 8. Distribution of bootstrap replicates for mean exponential wait times. 
 &lt;/div&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##     2.5%    97.5% 
-## 18.29412 56.82353
+## 18.29412 57.65000
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 

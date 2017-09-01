@@ -86,7 +86,7 @@ stan_exp <- stan_model(model_code=stan_string)
 ```
 
 
-Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is small, so I'll use a scale parameter that communicates this. Let's keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I'm spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we'll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don't report the results in the blog, but the model doesn't seem very sensitive to the prior, even with only 17 observations).
+Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is short, so I'll use a scale parameter that communicates this. Let's keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I'm spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we'll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don't report the results in the blog, but the model doesn't seem very sensitive to the prior, even with only 17 observations).
 
 Here's what this prior looks like.
 
