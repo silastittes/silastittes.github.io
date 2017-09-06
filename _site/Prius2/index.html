@@ -54,7 +54,9 @@
     </div>
 
     <div id="main" role="main" class="container">
-      <article class="post">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+<article class="post">
   <h1>Prius Spotting II: Rise of the Conjugates (Rated R)</h1>
 
   <div class="entry">
@@ -64,15 +66,15 @@
 
 <p>The key is conjugacy. Without going into the details, it’s often the case that the product of the likelihood and prior distributions result in a posterior distribution that is from the same family as the prior. <a href="https://en.wikipedia.org/wiki/Conjugate_prior">Wikipedia</a> has more details and a good table of conjugate distributions. The result is the ability to use data to update the parameters of the prior directly to arrive at the exact posterior.</p>
 
-<p>The conjugate prior for the exponential distribution is the gamma distribution, where the prior values for the shape ($\alpha$) and rate ($\beta$) are updated with data as</p>
+<p>The conjugate prior for the exponential distribution is the gamma distribution, where the prior values for the shape (<script type="math/tex">\alpha</script>) and rate (<script type="math/tex">\beta</script>) are updated with data as</p>
 
-<p><script type="math/tex">\alpha' = \alpha + n</script>
-and</p>
+<script type="math/tex; mode=display">\alpha' = \alpha + n</script>
 
-<p><script type="math/tex">\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}</script>
-where $y_i$ are the observations and $n$ is the number of observations.</p>
+<script type="math/tex; mode=display">\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}</script>
 
-<p>Side note, this is not what is listed for $\beta’$ on the Wikipedia page, I took the equation from this <a href="https://www.johndcook.com/CompendiumOfConjugatePriors.pdf">page</a>.</p>
+<p>where <script type="math/tex">y_i</script> are the observations and <script type="math/tex">n</script> is the number of observations.</p>
+
+<p>Side note, this is not what is listed for <script type="math/tex">\beta'</script> on the Wikipedia page, I took the equation from this <a href="https://www.johndcook.com/CompendiumOfConjugatePriors.pdf">page</a>.</p>
 
 <p>Okay, with conjugacy in hand, we can plug in some data and characterize the gamma distributed posterior of the exponential rate parameter. To make my life easier, I’m gonna keep things in terms of the rate instead of the scale (for both gamma and exponential).</p>
 
@@ -115,18 +117,19 @@ where $y_i$ are the observations and $n$ is the number of observations.</p>
 </div>
 
 <p><img src="/figure/source/2017-09-03-Prius2/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" />
-Not surprisingly, quite close! If we ran Stan multiple times, I’m sure it would nicely hug the exact curve. We can better evaluate just how close things are by comparing the approximate parameter values produced by Stan to those produced using math. To do so, we have to use a little trick called moment matching, where we can use the mean and variance (the first and second moments) of Stan’s draws to derive $\alpha$ and $\beta$ values for the gamma distribution. Relying on Wikipedia (or pretty much any book on Probability), we find:</p>
+Not surprisingly, quite close! If we ran Stan multiple times, I’m sure it would nicely hug the exact curve. We can better evaluate just how close things are by comparing the approximate parameter values produced by Stan to those produced using math. To do so, we have to use a little trick called moment matching, where we can use the mean and variance (the first and second moments) of Stan’s draws to derive <script type="math/tex">\alpha</script> and <script type="math/tex">\beta</script> values for the gamma distribution. Relying on Wikipedia (or pretty much any book on Probability), we find:</p>
 
-<p><script type="math/tex">\mu = \frac{\alpha}{\beta}</script> 
-and</p>
+<script type="math/tex; mode=display">\mu = \frac{\alpha}{\beta}</script>
 
-<p><script type="math/tex">\sigma^2 = \frac{\alpha}{\beta^}</script>
-We could either use the parameters for the exact gamma, and get the moments, or use the moments of the Stan draws, and convert to the gamma parameters. For a number of reasons, its’ useful to demonstrate the latter. From the system of two equations, we can solve the two parameters as functions of the moments:</p>
+<script type="math/tex; mode=display">\sigma^2 = \frac{\alpha}{\beta^2}</script>
 
-<p><script type="math/tex">\alpha = \frac{\mu^2}{\sigma^2}</script>
-and
-<script type="math/tex">\beta = \frac{\mu^2}{\sigma^2}</script>
-Now, we can plug this into R and see how the three curve compare numerically and visually:</p>
+<p>We could either use the parameters for the exact gamma, and get the moments, or use the moments of the Stan draws, and convert to the gamma parameters. For a number of reasons, its’ useful to demonstrate the latter. From the system of two equations, we can solve the two parameters as functions of the moments:</p>
+
+<script type="math/tex; mode=display">\alpha = \frac{\mu^2}{\sigma^2}</script>
+
+<script type="math/tex; mode=display">\beta = \frac{\mu}{\sigma^2}</script>
+
+<p>Now, we can plug this into R and see how the three curve compare numerically and visually:</p>
 
 <div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">post_y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">exp_exact</span><span class="p">(</span><span class="w">
   </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xseq</span><span class="p">,</span><span class="w"> 
@@ -160,7 +163,7 @@ Now, we can plug this into R and see how the three curve compare numerically and
 
 <p><img src="/figure/source/2017-09-03-Prius2/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" /></p>
 
-<p>For the exact gamma, $\alpha = $ 18 and $\beta = $ 618, for the Stan draws, $\alpha = $ 19.15, and $\beta = $ 655.5. The Stan results are not identical, but running the model several times, the numbers generally are quite close.</p>
+<p>For the exact gamma, <script type="math/tex">\alpha =</script> 18 and <script type="math/tex">\beta =</script> 618, for the Stan draws, <script type="math/tex">\alpha =</script> 19.15, and <script type="math/tex">\beta =</script> 655.5. The Stan results are not identical, but running the model several times, the numbers generally are quite close.</p>
 
 <p>As mentioned in the last post, it’s only the simplest models that we can get exact solutions for the posterior, but why not do it when you can?</p>
 
@@ -204,6 +207,7 @@ Now, we can plug this into R and see how the three curve compare numerically and
 <p>I’ll end the post by commenting on another exciting thing about Bayesian approaches, and that’s updating. Besides getting some new data, this and the last post have already introduced all the ingredients we need to produce another posterior. The new posterior would use the previous posterior to derive the priors. Even if our choice in priors sucks the first go round, we can utilize our old data in an elegant and direct way through new priors that should be better informed about what we ought to expect to see in the world. But, I’ll leave that for the next post, part III of the series. Expect another cheesy name too.</p>
 
 <p>Along with the internet, this post was greatly aided by having read Hobbs and Hooten’s excellent and concise text, <em>Bayesian models: a statistical primer for ecologists</em>.</p>
+
 
   </div>
 

@@ -14,15 +14,15 @@
 
 &lt;p&gt;The key is conjugacy. Without going into the details, it’s often the case that the product of the likelihood and prior distributions result in a posterior distribution that is from the same family as the prior. &lt;a href=&quot;https://en.wikipedia.org/wiki/Conjugate_prior&quot;&gt;Wikipedia&lt;/a&gt; has more details and a good table of conjugate distributions. The result is the ability to use data to update the parameters of the prior directly to arrive at the exact posterior.&lt;/p&gt;
 
-&lt;p&gt;The conjugate prior for the exponential distribution is the gamma distribution, where the prior values for the shape ($\alpha$) and rate ($\beta$) are updated with data as&lt;/p&gt;
+&lt;p&gt;The conjugate prior for the exponential distribution is the gamma distribution, where the prior values for the shape (&lt;script type=&quot;math/tex&quot;&gt;\alpha&lt;/script&gt;) and rate (&lt;script type=&quot;math/tex&quot;&gt;\beta&lt;/script&gt;) are updated with data as&lt;/p&gt;
 
-&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\alpha' = \alpha + n&lt;/script&gt;
-and&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\alpha' = \alpha + n&lt;/script&gt;
 
-&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}&lt;/script&gt;
-where $y_i$ are the observations and $n$ is the number of observations.&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}&lt;/script&gt;
 
-&lt;p&gt;Side note, this is not what is listed for $\beta’$ on the Wikipedia page, I took the equation from this &lt;a href=&quot;https://www.johndcook.com/CompendiumOfConjugatePriors.pdf&quot;&gt;page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;y_i&lt;/script&gt; are the observations and &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; is the number of observations.&lt;/p&gt;
+
+&lt;p&gt;Side note, this is not what is listed for &lt;script type=&quot;math/tex&quot;&gt;\beta'&lt;/script&gt; on the Wikipedia page, I took the equation from this &lt;a href=&quot;https://www.johndcook.com/CompendiumOfConjugatePriors.pdf&quot;&gt;page&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Okay, with conjugacy in hand, we can plug in some data and characterize the gamma distributed posterior of the exponential rate parameter. To make my life easier, I’m gonna keep things in terms of the rate instead of the scale (for both gamma and exponential).&lt;/p&gt;
 
@@ -65,18 +65,19 @@ where $y_i$ are the observations and $n$ is the number of observations.&lt;/p&gt
 &lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/figure/source/2017-09-03-Prius2/unnamed-chunk-3-1.png&quot; title=&quot;plot of chunk unnamed-chunk-3&quot; alt=&quot;plot of chunk unnamed-chunk-3&quot; style=&quot;display: block; margin: auto;&quot; /&gt;
-Not surprisingly, quite close! If we ran Stan multiple times, I’m sure it would nicely hug the exact curve. We can better evaluate just how close things are by comparing the approximate parameter values produced by Stan to those produced using math. To do so, we have to use a little trick called moment matching, where we can use the mean and variance (the first and second moments) of Stan’s draws to derive $\alpha$ and $\beta$ values for the gamma distribution. Relying on Wikipedia (or pretty much any book on Probability), we find:&lt;/p&gt;
+Not surprisingly, quite close! If we ran Stan multiple times, I’m sure it would nicely hug the exact curve. We can better evaluate just how close things are by comparing the approximate parameter values produced by Stan to those produced using math. To do so, we have to use a little trick called moment matching, where we can use the mean and variance (the first and second moments) of Stan’s draws to derive &lt;script type=&quot;math/tex&quot;&gt;\alpha&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;\beta&lt;/script&gt; values for the gamma distribution. Relying on Wikipedia (or pretty much any book on Probability), we find:&lt;/p&gt;
 
-&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\mu = \frac{\alpha}{\beta}&lt;/script&gt; 
-and&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mu = \frac{\alpha}{\beta}&lt;/script&gt;
 
-&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\sigma^2 = \frac{\alpha}{\beta^}&lt;/script&gt;
-We could either use the parameters for the exact gamma, and get the moments, or use the moments of the Stan draws, and convert to the gamma parameters. For a number of reasons, its’ useful to demonstrate the latter. From the system of two equations, we can solve the two parameters as functions of the moments:&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sigma^2 = \frac{\alpha}{\beta^2}&lt;/script&gt;
 
-&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\alpha = \frac{\mu^2}{\sigma^2}&lt;/script&gt;
-and
-&lt;script type=&quot;math/tex&quot;&gt;\beta = \frac{\mu^2}{\sigma^2}&lt;/script&gt;
-Now, we can plug this into R and see how the three curve compare numerically and visually:&lt;/p&gt;
+&lt;p&gt;We could either use the parameters for the exact gamma, and get the moments, or use the moments of the Stan draws, and convert to the gamma parameters. For a number of reasons, its’ useful to demonstrate the latter. From the system of two equations, we can solve the two parameters as functions of the moments:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\alpha = \frac{\mu^2}{\sigma^2}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\beta = \frac{\mu}{\sigma^2}&lt;/script&gt;
+
+&lt;p&gt;Now, we can plug this into R and see how the three curve compare numerically and visually:&lt;/p&gt;
 
 &lt;div class=&quot;language-r highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;post_y&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exp_exact&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xseq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; 
@@ -110,7 +111,7 @@ Now, we can plug this into R and see how the three curve compare numerically and
 
 &lt;p&gt;&lt;img src=&quot;/figure/source/2017-09-03-Prius2/unnamed-chunk-4-1.png&quot; title=&quot;plot of chunk unnamed-chunk-4&quot; alt=&quot;plot of chunk unnamed-chunk-4&quot; style=&quot;display: block; margin: auto;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;For the exact gamma, $\alpha = $ 18 and $\beta = $ 618, for the Stan draws, $\alpha = $ 19.15, and $\beta = $ 655.5. The Stan results are not identical, but running the model several times, the numbers generally are quite close.&lt;/p&gt;
+&lt;p&gt;For the exact gamma, &lt;script type=&quot;math/tex&quot;&gt;\alpha =&lt;/script&gt; 18 and &lt;script type=&quot;math/tex&quot;&gt;\beta =&lt;/script&gt; 618, for the Stan draws, &lt;script type=&quot;math/tex&quot;&gt;\alpha =&lt;/script&gt; 19.15, and &lt;script type=&quot;math/tex&quot;&gt;\beta =&lt;/script&gt; 655.5. The Stan results are not identical, but running the model several times, the numbers generally are quite close.&lt;/p&gt;
 
 &lt;p&gt;As mentioned in the last post, it’s only the simplest models that we can get exact solutions for the posterior, but why not do it when you can?&lt;/p&gt;
 
@@ -154,6 +155,7 @@ Now, we can plug this into R and see how the three curve compare numerically and
 &lt;p&gt;I’ll end the post by commenting on another exciting thing about Bayesian approaches, and that’s updating. Besides getting some new data, this and the last post have already introduced all the ingredients we need to produce another posterior. The new posterior would use the previous posterior to derive the priors. Even if our choice in priors sucks the first go round, we can utilize our old data in an elegant and direct way through new priors that should be better informed about what we ought to expect to see in the world. But, I’ll leave that for the next post, part III of the series. Expect another cheesy name too.&lt;/p&gt;
 
 &lt;p&gt;Along with the internet, this post was greatly aided by having read Hobbs and Hooten’s excellent and concise text, &lt;em&gt;Bayesian models: a statistical primer for ecologists&lt;/em&gt;.&lt;/p&gt;
+
 </description>
         <pubDate>Sun, 03 Sep 2017 00:00:00 -0600</pubDate>
         <link>silastittes.github.io/Prius2/</link>
