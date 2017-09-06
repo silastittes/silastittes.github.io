@@ -1,0 +1,170 @@
+---
+layout: post
+title: "Prius Spotting II: Rise of the Conjugates (Rated R)"
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  fig.align = "center",
+  root.dir = "~/Documents/silastittes.github.io/"
+  )
+
+suppressMessages(library(magrittr))
+suppressMessages(library(tidyverse))
+suppressMessages(library(lubridate))
+source("~/Documents/silastittes.github.io/_source/prius_exp_posts.R")
+
+
+wt_times <- c("00:11", "01:08", "00:06", "02:06", "00:06", "00:16",
+              "00:00", "00:06", "01:43", "00:13", "00:05", "00:13",
+              "01:59", "00:45", "00:27", "00:51", "00:02") %>% 
+  ms %>%
+  as.numeric  %>%
+  data_frame %>%
+  set_colnames("wait")
+
+n_obs <- length(wt_times$wait)
+```
+
+
+The positive response from social media made me want to do a follow-up post (thanks!), I'm gonna try to keep it short. If you haven't read the previous post, you can do so [here](https://silastittes.github.io/Prius/).
+
+After a little reading and staring at tables, I realized getting the exact solution for the posterior of the exponential rate parameter is pretty straightforward. There is certainly some value in comparing the exact solution and approximate one we arrived at in the last post using HMCMC sampling in Stan (nothing saves CPU time like math).
+
+The key is conjugacy. Without going into the details, it's often the case that the product of the likelihood and prior distributions result in a posterior distribution that is from the same family as the prior. [Wikipedia](https://en.wikipedia.org/wiki/Conjugate_prior) has more details and a good table of conjugate distributions. The result is the ability to use data to update the parameters of the prior directly to arrive at the exact posterior.
+
+The conjugate prior for the exponential distribution is the gamma distribution, where the prior values for the shape ($\alpha$) and rate ($\beta$) are updated with data as
+
+$$\alpha' = \alpha + n$$
+and 
+
+$$\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}$$
+where $y_i$ are the observations and $n$ is the number of observations.
+
+Side note, this is not what is listed for $\beta'$ on the Wikipedia page, I took the equation from this [page](https://www.johndcook.com/CompendiumOfConjugatePriors.pdf).
+
+Okay, with conjugacy in hand, we can plug in some data and characterize the gamma distributed posterior of the exponential rate parameter. To make my life easier, I'm gonna keep things in terms of the rate instead of the scale (for both gamma and exponential).
+
+Here's a function to compute the exact posterior:
+```{r}
+exp_exact <- function(x, y, shape, rate){
+  dgamma(
+    x = xseq,
+    shape = shape + length(y),
+    rate = (1 + rate*sum(y)) / rate
+    )
+}
+
+xseq <- seq(0, 1, length.out = 1000)
+post_y <- exp_exact(
+  x = xseq, 
+  y = wt_times$wait, 
+  shape = 1,
+  rate = 1
+)
+```
+
+
+Let's visually compare the approximate and exact posteriors:
+```{r}
+post_y <- exp_exact(
+  x = xseq, 
+  y = wt_times$wait, #<-- hey there's the data!
+  shape = 1,
+  rate = 1
+)
+
+plot(density(exp_post$beta),
+     main = "", 
+     xlab = "Rate parameter")
+lines(xseq, post_y, col = "blue", lty = 3, lwd = 2)
+
+legend("topright", c("approximate", "exact"), lty = c(1, 3))
+
+```
+Not surprisingly, quite close! If we ran Stan multiple times, I'm sure it would nicely hug the exact curve. We can better evaluate just how close things are by comparing the approximate parameter values produced by Stan to those produced using math. To do so, we have to use a little trick called moment matching, where we can use the mean and variance (the first and second moments) of Stan's draws to derive $\alpha$ and $\beta$ values for the gamma distribution. Relying on Wikipedia (or pretty much any book on Probability), we find:
+
+$$\mu = \frac{\alpha}{\beta}$$ 
+and 
+
+$$\sigma^2 = \frac{\alpha}{\beta^}$$
+We could either use the parameters for the exact gamma, and get the moments, or use the moments of the Stan draws, and convert to the gamma parameters. For a number of reasons, its' useful to demonstrate the latter. From the system of two equations, we can solve the two parameters as functions of the moments:
+
+$$\alpha = \frac{\mu^2}{\sigma^2}$$
+and
+$$\beta = \frac{\mu^2}{\sigma^2}$$
+Now, we can plug this into R and see how the three curve compare numerically and visually:
+```{r}
+post_y <- exp_exact(
+  x = xseq, 
+  y = wt_times$wait, #<-- hey there's the data!
+  shape = 1,
+  rate = 1
+)
+
+prox_y <- dgamma(
+  x = xseq, 
+  shape = mean(exp_post$beta)^2 / var(exp_post$beta),
+  rate =  mean(exp_post$beta) / var(exp_post$beta)
+  )
+
+
+plot(density(exp_post$beta),
+     main = "", 
+     xlab = "Rate parameter")
+lines(xseq, post_y, col = "blue", lty = 3, lwd = 2)
+lines(xseq, prox_y, col = "red", lty = 3, lwd = 2)
+
+
+legend(
+  "topright", 
+  c("approximate", "exact", "approx. to gamma"), 
+  lty = c(1, 3, 3), 
+  col = c("black", "blue", "red")
+  )
+
+```
+
+For the exact gamma, $\alpha = $ `r 1 + length(wt_times$wait)` and $\beta = $ `r (1 + 1*sum(wt_times$wait)) / 1`, for the Stan draws, $\alpha = $ `r round(mean(exp_post$beta)^2 / var(exp_post$beta), 2)`, and $\beta = $ `r round(mean(exp_post$beta) / var(exp_post$beta),2)`. The Stan results are not identical, but running the model several times, the numbers generally are quite close.  
+
+As mentioned in the last post, it's only the simplest models that we can get exact solutions for the posterior, but why not do it when you can?
+
+Before ending the post, let's also look at the effect of varying the prior values.
+```{r}
+n_sim <- 10
+
+xseq <- seq(0, 0.25, length.out = 500)
+
+shapes <- seq(0, 100, length.out = 1000) %>% sample(10) 
+rates <- seq(0, 100, length.out = 1000) %>% sample(10)
+
+prior_df <- 1:n_sim %>% map_df(~{
+  post_y <- exp_exact(
+  x = xseq, 
+  y = wt_times$wait, 
+  shape = shapes[.x],
+  rate = rates[.x]
+  ) %>% data.frame %>%
+  mutate(sim = rep(.x, length(xseq)),
+         xseq = xseq)
+}) %>% set_colnames(c("prob", "iter", "xseq"))
+
+
+obs_den <- density(exp_post$beta)
+obs_df <- data.frame(x = obs_den$x, y = obs_den$y)
+
+ggplot() +
+  geom_line(data = prior_df, aes(x = xseq, y = prob, group = iter), colour = "blue") +
+  geom_line(data = obs_df, aes(x = x, y = y)) +
+  xlab("Rate") +
+  ylab("Density") +
+  theme_minimal()
+  
+```
+
+After trying a lot of different values, I can't seem to produce a posterior with a rate much lower than the original. I suppose that indicates the priors I chose were regularizing by placing weight on slower rates. Now, some of the posteriors shown here are absurd (i.e. a rate of 0.15 is a Prius every ~6.5 seconds), so clearly the data is somewhat more sensitive to the prior choices than I previously suggested, but it's also worth noting that I'm haphazardly considering some ridiculously large priors. 
+
+I'll end the post by commenting on another exciting thing about Bayesian approaches, and that's updating. Besides getting some new data, this and the last post have already introduced all the ingredients we need to produce another posterior. The new posterior would use the previous posterior to derive the priors. Even if our choice in priors sucks the first go round, we can utilize our old data in an elegant and direct way through new priors that should be better informed about what we ought to expect to see in the world. But, I'll leave that for the next post, part III of the series. Expect another cheesy name too. 
+
+Along with the internet, this post was greatly aided by having read Hobbs and Hooten's excellent and concise text, *Bayesian models: a statistical primer for ecologists*. 
