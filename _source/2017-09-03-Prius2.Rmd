@@ -78,7 +78,8 @@ post_y <- exp_exact(
 
 plot(density(exp_post$beta),
      main = "", 
-     xlab = "Rate parameter")
+     xlab = "Rate parameter", 
+     cex.axis = 1.25, cex.lab = 1.25)
 lines(xseq, post_y, col = "blue", lty = 3, lwd = 2)
 
 legend("topright", c("approximate", "exact"), lty = c(1, 3))
@@ -125,7 +126,8 @@ prox_y <- dgamma(
 
 plot(density(exp_post$beta),
      main = "", 
-     xlab = "Rate parameter")
+     xlab = "Rate parameter",
+     cex.axis = 1.25, cex.lab = 1.25)
 lines(xseq, post_y, col = "blue", lty = 3, lwd = 2)
 lines(xseq, prox_y, col = "red", lty = 3, lwd = 2)
 
@@ -172,7 +174,8 @@ ggplot() +
   geom_line(data = obs_df, aes(x = x, y = y)) +
   xlab("Rate") +
   ylab("Density") +
-  theme_minimal()
+  theme_minimal() +
+  theme(text = element_text(size=20))
   
 ```
 
