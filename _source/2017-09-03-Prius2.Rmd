@@ -28,7 +28,7 @@ n_obs <- length(wt_times$wait)
 ```
 
 
-EDIT: If previously showed a formula for getting the updated  value of $\beta$ in a gamma distribution using conjugacy. After some poking around, I've changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.
+EDIT: If previously showed a formula for getting the updated  value of $$\beta$$ in a gamma distribution using conjugacy. After some poking around, I've changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.
 
 The positive response from social media made me want to do a follow-up post (thanks!), I'm gonna try to keep it short. If you haven't read the previous post, you can do so [here](https://silastittes.github.io/Prius/).
 
