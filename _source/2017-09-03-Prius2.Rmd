@@ -28,6 +28,8 @@ n_obs <- length(wt_times$wait)
 ```
 
 
+EDIT: If previously showed a formula for getting the updated  value of $\beta$ in a gamma distribution using conjugacy. After some poking around, I've changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.
+
 The positive response from social media made me want to do a follow-up post (thanks!), I'm gonna try to keep it short. If you haven't read the previous post, you can do so [here](https://silastittes.github.io/Prius/).
 
 After a little reading and staring at tables, I realized getting the exact solution for the posterior of the exponential rate parameter is pretty straightforward. There is certainly some value in comparing the exact solution and approximate one we arrived at in the last post using HMCMC sampling in Stan (nothing saves CPU time like math).
@@ -39,11 +41,9 @@ The conjugate prior for the exponential distribution is the gamma distribution, 
 $$\alpha' = \alpha + n$$
 
 
-$$\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}$$
+$$\beta' = \beta + \sum_{i=1}^{n} y_i$$
 
 where $$y_i$$ are the observations and $$n$$ is the number of observations.
-
-Side note, this is not what is listed for $$\beta'$$ on the Wikipedia page, I took the equation from this [page](https://www.johndcook.com/CompendiumOfConjugatePriors.pdf).
 
 Okay, with conjugacy in hand, we can plug in some data and characterize the gamma distributed posterior of the exponential rate parameter. To make my life easier, I'm gonna keep things in terms of the rate instead of the scale (for both gamma and exponential).
 
@@ -53,22 +53,15 @@ exp_exact <- function(x, y, shape, rate){
   dgamma(
     x = xseq,
     shape = shape + length(y),
-    rate = (1 + rate*sum(y)) / rate
+    rate = rate + sum(y)
     )
 }
-
-xseq <- seq(0, 1, length.out = 1000)
-post_y <- exp_exact(
-  x = xseq, 
-  y = wt_times$wait, 
-  shape = 1,
-  rate = 1
-)
 ```
 
 
 Let's visually compare the approximate and exact posteriors:
 ```{r}
+xseq <- seq(0, 1, length.out = 1000)
 post_y <- exp_exact(
   x = xseq, 
   y = wt_times$wait, #<-- hey there's the data!

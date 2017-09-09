@@ -9,10 +9,10 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
 
     
-    <meta name="description" content="The positive response from social media made me want to do a follow-up post (thanks!), I’m gonna try to keep it short. If you haven’t read the previous post, you can do so here.
+    <meta name="description" content="EDIT: If previously showed a formula for getting the updated  value of $\beta$ in a gamma distribution using conjugacy. After some poking around, I’ve changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.
 
 " />
-    <meta property="og:description" content="The positive response from social media made me want to do a follow-up post (thanks!), I’m gonna try to keep it short. If you haven’t read the previous post, you can do so here.
+    <meta property="og:description" content="EDIT: If previously showed a formula for getting the updated  value of $\beta$ in a gamma distribution using conjugacy. After some poking around, I’ve changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.
 
 " />
     
@@ -60,7 +60,9 @@
   <h1>Prius Spotting II: Rise of the Conjugates (Rated R)</h1>
 
   <div class="entry">
-    <p>The positive response from social media made me want to do a follow-up post (thanks!), I’m gonna try to keep it short. If you haven’t read the previous post, you can do so <a href="https://silastittes.github.io/Prius/">here</a>.</p>
+    <p>EDIT: If previously showed a formula for getting the updated  value of $\beta$ in a gamma distribution using conjugacy. After some poking around, I’ve changed the formula to match what is on the Wikipedia page (linked below). Seems to be working.</p>
+
+<p>The positive response from social media made me want to do a follow-up post (thanks!), I’m gonna try to keep it short. If you haven’t read the previous post, you can do so <a href="https://silastittes.github.io/Prius/">here</a>.</p>
 
 <p>After a little reading and staring at tables, I realized getting the exact solution for the posterior of the exponential rate parameter is pretty straightforward. There is certainly some value in comparing the exact solution and approximate one we arrived at in the last post using HMCMC sampling in Stan (nothing saves CPU time like math).</p>
 
@@ -70,11 +72,9 @@
 
 <script type="math/tex; mode=display">\alpha' = \alpha + n</script>
 
-<script type="math/tex; mode=display">\beta' = \frac{1 + \beta \sum_{i=1}^{n} y_i}{\beta}</script>
+<script type="math/tex; mode=display">\beta' = \beta + \sum_{i=1}^{n} y_i</script>
 
 <p>where <script type="math/tex">y_i</script> are the observations and <script type="math/tex">n</script> is the number of observations.</p>
-
-<p>Side note, this is not what is listed for <script type="math/tex">\beta'</script> on the Wikipedia page, I took the equation from this <a href="https://www.johndcook.com/CompendiumOfConjugatePriors.pdf">page</a>.</p>
 
 <p>Okay, with conjugacy in hand, we can plug in some data and characterize the gamma distributed posterior of the exponential rate parameter. To make my life easier, I’m gonna keep things in terms of the rate instead of the scale (for both gamma and exponential).</p>
 
@@ -84,23 +84,16 @@
   </span><span class="n">dgamma</span><span class="p">(</span><span class="w">
     </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xseq</span><span class="p">,</span><span class="w">
     </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="w">
-    </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rate</span><span class="o">*</span><span class="nf">sum</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rate</span><span class="w">
+    </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
     </span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
-
-</span><span class="n">xseq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1000</span><span class="p">)</span><span class="w">
-</span><span class="n">post_y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">exp_exact</span><span class="p">(</span><span class="w">
-  </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xseq</span><span class="p">,</span><span class="w"> 
-  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wt_times</span><span class="o">$</span><span class="n">wait</span><span class="p">,</span><span class="w"> 
-  </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-  </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="p">)</span><span class="w">
 </span></code></pre>
 </div>
 
 <p>Let’s visually compare the approximate and exact posteriors:</p>
 
-<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">post_y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">exp_exact</span><span class="p">(</span><span class="w">
+<div class="language-r highlighter-rouge"><pre class="highlight"><code><span class="n">xseq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1000</span><span class="p">)</span><span class="w">
+</span><span class="n">post_y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">exp_exact</span><span class="p">(</span><span class="w">
   </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xseq</span><span class="p">,</span><span class="w"> 
   </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wt_times</span><span class="o">$</span><span class="n">wait</span><span class="p">,</span><span class="w"> </span><span class="c1">#&lt;-- hey there's the data!
 </span><span class="w">  </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
