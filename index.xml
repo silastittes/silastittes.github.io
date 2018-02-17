@@ -23,10 +23,10 @@
     <item>
       <title>About</title>
       <link>/about/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>This is a &amp;ldquo;hello world&amp;rdquo; example website for the blogdown package. The theme was forked from @jrutheiser/hugo-lithium-theme and modified by Yihui Xie.</description>
+      <description>Hugo is for cool kids, so I am rebuilding my blog using the blogdown package. Endless gratitude to Yihui Xie for making these amazing web utilities accessible to biologists like me.</description>
     </item>
     
   </channel>
