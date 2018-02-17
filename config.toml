@@ -1,0 +1,32 @@
+baseurl = "/"
+publishDir = "docs"
+title = "Hugo Tanka Theme"
+author = "Nan Xiao"
+canonifyurls = true
+languagecode = "en"
+theme = "hugo-tanka"
+
+googleAnalytics = ""
+disqusShortname = "silastittes"
+disable_mathjax = false
+
+pygmentsstyle      = "vs"
+pygmentscodefences = true
+
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+
+[params]
+  sitename = "Silas' Blog"
+
+[[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/silastittes"
+    weight = 2
+[[menu.main]]
+    name = "Twitter"
+    url = "https://twitter.com/silastittes"
+    weight = 4
+[[menu.main]]
+    name = "Google Scholar"
+    url = "https://scholar.google.com/citations?user=LxGAurUAAAAJ&hl=en"
+    weight = 4
