@@ -1,32 +1,41 @@
 baseurl = "/"
-publishDir = "docs"
-title = "Hugo Tanka Theme"
-author = "Nan Xiao"
-canonifyurls = true
-languagecode = "en"
-theme = "hugo-tanka"
-
+languageCode = "en-us"
+title = "A Hugo website"
+theme = "hugo-lithium-theme"
 googleAnalytics = ""
 disqusShortname = "silastittes"
-disable_mathjax = false
-
-pygmentsstyle      = "vs"
-pygmentscodefences = true
-
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
-[params]
-  sitename = "Silas' Blog"
+[permalinks]
+    post = "/:year/:month/:day/:slug/"
 
+[[menu.main]]
+    name = "About"
+    url = "/about/"
 [[menu.main]]
     name = "GitHub"
     url = "https://github.com/silastittes"
-    weight = 2
-[[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/silastittes"
-    weight = 4
+
 [[menu.main]]
     name = "Google Scholar"
     url = "https://scholar.google.com/citations?user=LxGAurUAAAAJ&hl=en"
-    weight = 4
+
+
+[params]
+    description = "A website built through Hugo and blogdown."
+
+    # options for highlight.js (version, additional languages, and theme)
+    highlightjsVersion = "9.11.0"
+    highlightjsCDN = "//cdn.bootcss.com"
+    highlightjsLang = ["r", "yaml"]
+    highlightjsTheme = "github"
+
+    MathJaxCDN = "//cdn.bootcss.com"
+    MathJaxVersion = "2.7.1"
+
+    [params.logo]
+    url = "sims_plot.jpeg"
+    width = 50
+    height = 50
+    alt = "Logo"
+

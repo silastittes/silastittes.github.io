@@ -1,11 +1,12 @@
 ---
-title: Prius
+title: "What can we learn from spotting a Prius or two?"
 author: Silas Tittes
-date: '2018-02-16'
+date: '2017-08-30'
 slug: prius
 categories: []
 tags: []
 ---
+
 
 ```{r, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.align = "center")

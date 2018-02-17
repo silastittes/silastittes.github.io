@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.36.1" />
+
+
+<title>What can we learn from spotting a Prius or two? - A Hugo website</title>
+<meta property="og:title" content="What can we learn from spotting a Prius or two? - A Hugo website">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/silastittes">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/silastittes">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">9 min read</span>
+    
+
+    <h1 class="article-title">What can we learn from spotting a Prius or two?</h1>
+
+    
+    <span class="article-date">2017/08/30</span>
+    
+
+    <div class="article-content">
+      <p>If you live in a wealthy, liberal town like Boulder, CO, you’ve likely seen your fair share of Toyota Prii (this is supposedly the plural of Prius). Heck, you might even own one. I decided to collect a little data. I used my iPhone stopwatch to record wait times between seeing Prii. I walked at a near-constant speed, along a more or less linear transect along 13th Street, from Arapahoe to Spruce. I recorded for 10 minutes, hitting the “lap” button each time I saw a Prius (any year, parked or driving). There is some risk of counting one vehicle multiple times, but because I walked in one direction and only recorded for 10 minutes, I assume the risk is relatively low (unless Prius owners love driving so much, they just go out and do laps around city blocks – quite possible).</p>
+<p>Below is some code I’ve thrown together to analyze the data I collected. The objective here is to predict the expected wait times between Prius sightings, and to quantify uncertainty in this expectation. Along the way, we’ll check out the max time you should expect to wait, and test a few assumptions of the model.</p>
+<p>Load the relevant libraries:</p>
+<pre class="r"><code>suppressMessages(library(magrittr))
+suppressMessages(library(tidyverse))
+suppressMessages(library(lubridate))
+suppressMessages(library(rstan))
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())</code></pre>
+<p>Load the data (lubridate package to convert weird minute-seconds to numeric integers).</p>
+<pre class="r"><code>wt_times &lt;- c(&quot;00:11&quot;, &quot;01:08&quot;, &quot;00:06&quot;, &quot;02:06&quot;, &quot;00:06&quot;, &quot;00:16&quot;,
+              &quot;00:00&quot;, &quot;00:06&quot;, &quot;01:43&quot;, &quot;00:13&quot;, &quot;00:05&quot;, &quot;00:13&quot;,
+              &quot;01:59&quot;, &quot;00:45&quot;, &quot;00:27&quot;, &quot;00:51&quot;, &quot;00:02&quot;) %&gt;% 
+  ms %&gt;%
+  as.numeric  %&gt;%
+  data_frame %&gt;%
+  set_colnames(&quot;wait&quot;)
+
+n_obs &lt;- length(wt_times$wait)</code></pre>
+<p>First observation: I saw 17 Prii in 10 minutes – that strikes me as a lot! I make no attempt to calculate the total number of Prii in Boulder from these observations, but that seems like a possible feat with some effort.</p>
+<p>Let’s take a look at the distribution (it took some time, but I’m pretty solidly parked in <code>ggplot2</code> train these days).</p>
+<pre class="r"><code>wt_times %&gt;% ggplot(aes(x = wait)) +
+  stat_bin(binwidth = 12, alpha = 0.5,
+                 fill = &quot;green&quot;, colour = &quot;black&quot;) +
+  xlab(&quot;Seconds between Prius sightings (Boulder, CO)&quot;) +
+  theme_minimal() +
+  theme(text = element_text(size=20))</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> Figure 1. Sampled distribution of wait times.</p>
+<p>Based on the graph and similarity to other problems, it seems reasonable to assume wait times are exponentially distributed. I’ll also assume that the observations are dictated by a single rate parameter (easy to imagine density of Prii vary across neighborhoods, which would violate this assumption).</p>
+<p>To be totally overkill, I’m going to fit the model using Stan, to numerically approximate the posterior distribution of the exponential rate parameter. I’m pretty sure there’s an analytic solution for the posterior in this case (gamma distributed conjugacy?), but I’m just gonna do the Stan thing, since it generalizes well to more complex problems, and because I’m still pretty bad at real math.</p>
+<p>Usually I’d write the Stan code in a separate file because it makes life easier, but I’ll write it directly into this post as a string to keep the post self-contained. I’m using a gamma prior for the exponential rate parameter, and I’m putting the shape and scale parameters as input to the Stan model to make assessment of prior sensitivity easier.</p>
+<pre class="r"><code>stan_string &lt;- &quot;
+
+  data{
+    int&lt;lower = 0&gt; N;
+    real&lt;lower = 0&gt; y[N];
+    real&lt;lower = 0&gt; pr_shape;
+    real&lt;lower = 0&gt; pr_scale;
+  }
+
+  parameters{
+    real&lt;lower = 0&gt; beta; 
+  }
+
+  model{
+    beta ~ gamma(pr_shape, pr_scale);
+    target += exponential_lpdf(y | beta);
+  }
+&quot;</code></pre>
+<pre class="r"><code>stan_exp &lt;- stan_model(model_code=stan_string)</code></pre>
+<p>Stan parameterizes the exponential distribution using the rate, so a prior distribution that is concentrated near zero informs the model that wait times are long. This post was motivated by a belief that wait time between Prius spottings is short, so I’ll use a scale parameter that communicates this. Let’s keep things pushed toward zero (decay shape) with shape equal to one, and a large scale parameter to make for a long tail. I’m spit-balling here, but it seems like seeing a Prius every minute would be reasonable, so we’ll make both shape and scale equal to one. Choices about the prior should be made before looking at the data, but we can see how sensitive our inferences are to changing the prior (I don’t report the results in the blog, but the model doesn’t seem very sensitive to the prior, even with only 17 observations).</p>
+<p>Here’s what this prior looks like.</p>
+<pre class="r"><code>xseq &lt;- seq(0, 5, length.out = 100)
+plot(xseq, dgamma(xseq, shape = 1, scale = 1), type = &quot;l&quot;, lwd = 2,
+     xlab = &quot;Rate parameter&quot;,
+     ylab = &quot;Density&quot;,
+     cex.axis = 1.25, cex.lab = 1.25)</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /> Figure 2. Gamma prior for exponential rate parameter.</p>
+<p>Bundle the data and run Stan.</p>
+<pre class="r"><code>stan_in &lt;- list(
+  y = wt_times$wait,
+  N = n_obs,
+  pr_shape = 1,
+  pr_scale = 1
+  )
+
+stan_fit &lt;- sampling(
+  object = stan_exp,
+  data = stan_in
+  )
+
+print(stan_fit)</code></pre>
+<pre><code>## Inference for Stan model: 45ee75e197adc87a0c44d348f2d7068b.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1228    1
+## lp__ -82.16    0.02 0.72 -84.18 -82.30 -81.90 -81.71 -81.65  1402    1
+## 
+## Samples were drawn using NUTS(diag_e) at Fri Feb 16 22:36:09 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+<pre class="r"><code>traceplot(stan_fit)</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /> Figure 3. Traceplot looks nice and grassy.</p>
+<p>This is a tiny model that runs quite quickly. The default of 4000 iterations and 50% warm up is probably more than necessary, but the number of effective samples is good, as are the rhat values being 1. The traceplot looks nice and grassy, without any indications the chains are getting stuck on parameter values. The model returns a few warnings about boundaries, but this is not a concern (as the message itself says).</p>
+<p>Next we can use the posterior draws to make inferences about the data.</p>
+<pre class="r"><code>#extract posterior draws from model
+exp_post &lt;- extract(stan_fit)
+
+#visualize posterior, but 1/rate, to see expected wait time scale
+exp_post %&gt;% data.frame() %&gt;% 
+  ggplot(aes(x = 1/beta))+
+  geom_density(fill = &quot;green&quot;, alpha = 0.5) +
+  theme_minimal() +
+  xlab(&quot;Expected wait time&quot;) +
+  theme(text = element_text(size=20))</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /> Figure 4. Inferred posterior distribution for exponential rate parameter.</p>
+<p>Compute credible interval of expected wait time</p>
+<pre class="r"><code>cred1 &lt;- quantile(1/exp_post$beta, c(0.025, 0.975))
+cred1</code></pre>
+<pre><code>##     2.5%    97.5% 
+## 22.58974 57.57373</code></pre>
+<p>So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 58 seconds.</p>
+<p>We can also easily see the probability that the expected wait time is less than, say, one minute.</p>
+<pre class="r"><code>mean(1/exp_post$beta &lt; 60)</code></pre>
+<pre><code>## [1] 0.98225</code></pre>
+<p>Also valuable in a Bayesian framework is the ability to conduct posterior predictive checks. We can use posterior draws of the rate parameter, and generate simulated data from this exponential distribution. Perhaps the wait times have more variation than the exponential distribution allows for. We simply need to compare the observed variation to that of the simulated data sets:</p>
+<pre class="r"><code>post_pred &lt;- exp_post$beta %&gt;% map(~rexp(n_obs, rate = .x))
+pred_var &lt;- post_pred %&gt;% map_dbl(~var(.x))
+hist(pred_var,main = &quot;&quot;,
+     xlab = &quot;Posterior predictive variance&quot;,
+     cex.axis = 1.25, cex.lab = 1.25)
+abline(v = var(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(pred_var &gt; var(wt_times$wait))</code></pre>
+<pre><code>## [1] 0.2295</code></pre>
+<p>Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.</p>
+<p>There’s a ~23% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.</p>
+<p>We can also get some idea of the max wait time conditional of the data.</p>
+<pre class="r"><code>pred_max &lt;- post_pred %&gt;% map_dbl(~max(.x))
+hist(pred_max, 
+     main = &quot;&quot;,
+     xlab = &quot;Posterior predictive maximum waits&quot;,
+     cex.axis = 1.25, cex.lab = 1.25)
+abline(v = max(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>quantile(pred_max/60, c(0.025, 0.975))</code></pre>
+<pre><code>##      2.5%     97.5% 
+## 0.8552452 4.4083258</code></pre>
+<p>Figure 6. Distribution of maximum wait times from posterior predictive distributions, green line is the sample maximum wait time.</p>
+<p>Wow, the model predicts wait times should pretty much always be less than five minutes. That’s a lot of Prii flashing past your face!</p>
+<p>We can also visually assess the simulated and observed distribution shapes by constructing quantile-quantile plots. I find it a bit easier to see departures by looking at the observed quantiles versus the difference in observed and simulated quantiles:</p>
+<pre class="r"><code>prbs &lt;- seq(0,1, length.out = n_obs)
+obs_quants &lt;- quantile(wt_times$wait, prbs)
+
+lev &lt;- 0.95
+up &lt;- 1 - (1 - lev)/2
+lo &lt;- (1 - lev)/2
+
+pred_quants &lt;- post_pred %&gt;% map(~{quantile(.x, prbs) }) %&gt;%
+  do.call(cbind, .) %&gt;% 
+  data.frame() %&gt;%
+  gather(key = &quot;draw&quot;, &quot;quants&quot;) %&gt;%
+  group_by(draw) %&gt;%
+  mutate(obs_quants = obs_quants) %&gt;%
+  ungroup() %&gt;%
+  group_by(obs_quants) %&gt;%
+  summarise(upper = quantile(quants, up),
+            lower = quantile(quants, lo)
+            )
+
+#gross, but not sure how else to compile this for polygon
+pred_poly &lt;-  data.frame(
+  obs_quants = c(pred_quants$obs_quants, 
+                 rev(pred_quants$obs_quants)),
+  pred_quants = c(pred_quants$upper - pred_quants$obs_quants, 
+                  rev(pred_quants$lower-pred_quants$obs_quants))
+  )
+
+pred_poly %&gt;% ggplot(aes(x = obs_quants, y = pred_quants)) +
+  geom_polygon(alpha = 0.5, fill = &quot;green&quot;) +
+  geom_hline(yintercept = 0, lty = 2) +
+  theme_minimal() +
+  ylab(&quot;Simulated - observed quantiles&quot;) +
+  xlab(&quot;Observed quantiles&quot;) +
+  theme(text = element_text(size=20))</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /> Figure 7. 95% credible interval for difference between posterior predictive quantiles and sample quantiles for Prius sighting wait times.</p>
+<p>Ideally, the shape should be relatively flat (exponential mean scales with variance, so heteroskedasticity is fine) and centered on zero. Overall this looks pretty good. The replicated draws to encapsulate zero. We confirm the exponential model isn’t too bad.</p>
+<p>Another approach would have been to bootstrap the observations. <code>tidverse</code> makes this extra easy. Let’s see how the approximate confidence interval for the expected wait time from the bootstrap compares to the credible interval.</p>
+<pre class="r"><code>#10,000 bs reps
+boots &lt;- 1:1e4 %&gt;% 
+  map_dbl(~{wt_times$wait %&gt;% 
+  sample(replace = T) %&gt;% 
+  mean})
+
+hist(boots)
+abline(v = mean(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /> Figure 8. Distribution of bootstrap replicates for mean exponential wait times. Green line is sample mean (what’s up with me and green today?).</p>
+<pre class="r"><code>qnts &lt;- seq(0,1, length.out = 100)
+quantile(boots, c(0.025, 0.975))</code></pre>
+<pre><code>##     2.5%    97.5% 
+## 18.05735 57.23676</code></pre>
+<pre class="r"><code>qqplot(boots, 1/exp_post$beta, 
+       xlab = &quot;Bootstrap quantiles&quot;,
+       ylab = &quot;Bayesian quantiles&quot;, 
+       cex.axis = 1.25, cex.lab = 1.25)
+abline(0,1, col = &quot;green&quot;, lwd = 2 )</code></pre>
+<p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Figure 9. Bootstrap quantiles compared to posterior predictive quantiles. 1 to 1 line in green.</p>
+<p>The intervals and qqplot both indicate similar predictions, the credible interval reported above is slightly narrower.</p>
+<p>If the exponential distribution is a bad model to explain the wait times, it’s difficult to tell with so few observations. Conditional on the data at hand, the exponential seems to be a good assumption. Another worthwhile predictive check would be to assess if the observations are independent of each other and consistent over time/space. Ideally, the behavior of the sampling in the data would be consistent with what an exponential distribution would produce (exchangeable observations). I believe this would require some sort of quantification of auto-correlation. I will hold off on doing any of that.</p>
+<p>Probably could have stopped at the summary statistics, but either way the takehome is clear: you don’t have to wait around long before seeing a Prius in Boulder.</p>
+<p>Would love to hear your thoughts on the post, any and all comments and critiques are welcome.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
