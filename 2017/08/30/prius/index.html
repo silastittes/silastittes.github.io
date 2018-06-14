@@ -149,10 +149,10 @@ print(stan_fit)</code></pre>
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
 ## 
 ##        mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1598    1
-## lp__ -82.14    0.02 0.68 -84.17 -82.30 -81.87 -81.70 -81.65  1603    1
+## beta   0.03    0.00 0.01   0.02   0.02   0.03   0.03   0.04  1501    1
+## lp__ -82.15    0.02 0.72 -84.13 -82.31 -81.87 -81.70 -81.65  1687    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Thu Jun 14 11:44:06 2018.
+## Samples were drawn using NUTS(diag_e) at Thu Jun 14 11:49:01 2018.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
@@ -175,11 +175,11 @@ exp_post %&gt;% data.frame() %&gt;%
 <pre class="r"><code>cred1 &lt;- quantile(1/exp_post$beta, c(0.025, 0.975))
 cred1</code></pre>
 <pre><code>##     2.5%    97.5% 
-## 22.59041 56.69345</code></pre>
-<p>So there’s a 95% chance the expected wait time between Prius spottings is between 23 and 57 seconds.</p>
+## 22.44922 56.47759</code></pre>
+<p>So there’s a 95% chance the expected wait time between Prius spottings is between 22 and 56 seconds.</p>
 <p>We can also easily see the probability that the expected wait time is less than, say, one minute.</p>
 <pre class="r"><code>mean(1/exp_post$beta &lt; 60)</code></pre>
-<pre><code>## [1] 0.9845</code></pre>
+<pre><code>## [1] 0.986</code></pre>
 <p>Also valuable in a Bayesian framework is the ability to conduct posterior predictive checks. We can use posterior draws of the rate parameter, and generate simulated data from this exponential distribution. Perhaps the wait times have more variation than the exponential distribution allows for. We simply need to compare the observed variation to that of the simulated data sets:</p>
 <pre class="r"><code>post_pred &lt;- exp_post$beta %&gt;% map(~rexp(n_obs, rate = .x))
 pred_var &lt;- post_pred %&gt;% map_dbl(~var(.x))
@@ -189,9 +189,9 @@ hist(pred_var,main = &quot;&quot;,
 abline(v = var(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
 <p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>mean(pred_var &gt; var(wt_times$wait))</code></pre>
-<pre><code>## [1] 0.22925</code></pre>
+<pre><code>## [1] 0.21725</code></pre>
 <p>Figure 5. Distribution of variances from posterior predictive distributions, green line is the sample variance.</p>
-<p>There’s a ~23% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.</p>
+<p>There’s a ~22% probability of simulated data having variation greater than the observed. This isn’t too far off. The nearer to 50%, the more consistent the simulated data and observed. The exponential distribution model as-is seems fairly adequate.</p>
 <p>We can also get some idea of the max wait time conditional of the data.</p>
 <pre class="r"><code>pred_max &lt;- post_pred %&gt;% map_dbl(~max(.x))
 hist(pred_max, 
@@ -202,7 +202,7 @@ abline(v = max(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
 <p><img src="/post/2018-02-16-prius_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>quantile(pred_max/60, c(0.025, 0.975))</code></pre>
 <pre><code>##      2.5%     97.5% 
-## 0.8255579 4.4744357</code></pre>
+## 0.8401799 4.4382242</code></pre>
 <p>Figure 6. Distribution of maximum wait times from posterior predictive distributions, green line is the sample maximum wait time.</p>
 <p>Wow, the model predicts wait times should pretty much always be less than five minutes. That’s a lot of Prii flashing past your face!</p>
 <p>We can also visually assess the simulated and observed distribution shapes by constructing quantile-quantile plots. I find it a bit easier to see departures by looking at the observed quantiles versus the difference in observed and simulated quantiles:</p>
@@ -255,7 +255,7 @@ abline(v = mean(wt_times$wait), lwd = 2, col = &quot;green&quot;)</code></pre>
 <pre class="r"><code>qnts &lt;- seq(0,1, length.out = 100)
 quantile(boots, c(0.025, 0.975))</code></pre>
 <pre><code>##     2.5%    97.5% 
-## 18.17647 57.47206</code></pre>
+## 18.05882 57.35294</code></pre>
 <pre class="r"><code>qqplot(boots, 1/exp_post$beta, 
        xlab = &quot;Bootstrap quantiles&quot;,
        ylab = &quot;Bayesian quantiles&quot;, 
