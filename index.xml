@@ -19,8 +19,8 @@
       <guid>/2018/06/14/performr-vignette-is-live/</guid>
       <description>Skip to the goods.
 About time I dusted off the cobwebs on this ol blog.
-I’m working hard to complete revisions on my first chapter. In preperation, I’ve made a vignette to walk through how to use my R package perfomr, which provides the core modeling and functions that the manuscript relies on. It comes with a way to simulate data, so give it a whirl.
-I’ve been trying to learn more about neural networks, so maybe I’ll try to make a post about that (or anything really) soon … ish.</description>
+I’m working hard to complete revisions on my first chapter. In preperation, I’ve made a vignette to walk through how to use my R package perfomr, which provides the core functionality that the manuscript relies on. It comes with a way to simulate data, so give it a whirl.
+I’ve been trying to learn more about neural networks, so maybe I’ll make a post about that (or anything really) soon … ish.</description>
     </item>
     
     <item>
