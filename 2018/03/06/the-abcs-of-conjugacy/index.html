@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.36.1" />
+
+
+<title>The ABCs of conjugacy - A Hugo website</title>
+<meta property="og:title" content="The ABCs of conjugacy - A Hugo website">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/sims_plot.jpeg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/silastittes">GitHub</a></li>
+    
+    <li><a href="https://scholar.google.com/citations?user=LxGAurUAAAAJ&amp;hl=en">Google Scholar</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">The ABCs of conjugacy</h1>
+
+    
+    <span class="article-date">2018/03/06</span>
+    
+
+    <div class="article-content">
+      <p>NOTE: This post – like most my posts – is all about learning by writing. If something (or everything) is wrong, I would love to hear your thoughts about why.</p>
+<p>Defining a likelihood is hard for some problems. For example, estimating the population mutation parameter, <span class="math inline">\(\theta\)</span> (<span class="math inline">\(4N_{e}\mu\)</span> for diploids, or <span class="math inline">\(2N_{e}\mu\)</span> haploids). How do we define the likelihood for <span class="math inline">\(\theta\)</span>? There are exact solutions for simple cases <span class="citation">(Nielsen and Slatkin 2013)</span>, but the moment we start adding biologically realistic properties like migration and selection, things get hairy and hard to generalize – even using computational approximations (a computer still needs some function of <span class="math inline">\(\theta\)</span> to compute the right hand side of <span class="math inline">\(p(y \mid \theta)\)</span>). Can we avoid defining a likelihood and but still get predictions with probablistic uncertainty about our parameters of interest? Approximate Bayesian Computation (ABC) is designed for just that purpose.</p>
+<div id="abc" class="section level2">
+<h2>ABC</h2>
+<p>As with any Bayesian approach, the goal is to infer the conditional probability (posterior) of the model given the data. For the case of ABC, we are doing so without an explicit definition of the likelihood.</p>
+<p>The general recipe for ABC is:</p>
+<ul>
+<li><p>Draw parameter values from prior(s)</p></li>
+<li><p>Simulate data given those parameters</p></li>
+<li><p>Compare the observed data to the simulated data over some type of summary statistic(s).</p></li>
+<li><p>Reject parameter values (or combinations of values if we have more than one parameter) that produce summary statistics for simulated data that are too different from the summaries of the observed data, where “too different” must be defined with some metric that makes sense according to the computed statistics.</p></li>
+</ul>
+<p>To verify this works, let’s generate some data, approximate the posterior using ABC, and compare it to the exact posterior using conjugacy.</p>
+</div>
+<div id="the-data" class="section level2">
+<h2>The data</h2>
+<p>Let’s assume we’ve collected some count data, which is well described by the Poisson distrbution. Plenty of examples, but I’ll let you imagine your own scenerio.</p>
+<p>We can generate such data, choosing the Poisson’s parameter value <span class="math inline">\(\lambda\)</span> from a gamma distribution:</p>
+<pre class="r"><code>N &lt;- 54
+pr_shape &lt;- 2
+pr_rate &lt;- 1/2
+
+(λ &lt;- rgamma(1, shape = pr_shape, rate = pr_rate))</code></pre>
+<pre><code>## [1] 1.606605</code></pre>
+<pre class="r"><code>head(y &lt;- rpois(N, lambda = λ))</code></pre>
+<pre><code>## [1] 1 1 0 0 1 1</code></pre>
+<p>The exponential family of probability distribution functions all have conjugate priors, which means the posterior will be the same type of distribution as the prior. For simple one parameter models, the exact posterior can be computed given specific values for the prior(s).</p>
+<p><a href="https://en.wikipedia.org/wiki/Conjugate_prior">This wikipedia page</a> does a nice job describing conjugacy, and providing the formulas for computing posteriors using conjugacy. For a Poisson, the conjugate prior is Gamma distributed. The posterior distribution for <span class="math inline">\(\lambda\)</span> can be computed by updating the <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> parameter values of a Gamma following:</p>
+<p><span class="math display">\[\alpha&#39; = \alpha + \sum_{i=1}^{n} x_i\]</span> <span class="math display">\[\beta&#39; = \beta + n\]</span> Where <span class="math inline">\(x\)</span> is the vector of observed values, and n is the number of observations.</p>
+<p>Here’s a simple function to compute the updated parameters given values for the priors:</p>
+<pre class="r"><code>gamma_primes &lt;- function(x, alpha, beta){
+  alpha_prime &lt;- alpha + sum(x)
+  beta_prime &lt;- beta + length(x)
+  primes &lt;- c(alpha_prime, beta_prime)
+  names(primes) &lt;- c(&quot;alpha&quot;,&quot;beta&quot;)
+  primes
+}</code></pre>
+<p>Using this function with our data (and the same prior values used to generate the data):</p>
+<pre class="r"><code>(gamma_values &lt;- gamma_primes(y, alpha = pr_shape, beta = pr_rate))</code></pre>
+<pre><code>## alpha  beta 
+##  83.0  54.5</code></pre>
+<pre class="r"><code>x &lt;- seq(0, max(y), length.out = 200)
+plot(x,
+  dgamma(x,
+         shape = gamma_values[&quot;alpha&quot;], 
+         rate = gamma_values[&quot;beta&quot;]
+  ), 
+  type = &quot;l&quot;,
+  col = &quot;blue&quot;
+)
+
+lines(x,
+  dgamma(x,
+         shape = pr_shape, 
+         rate = pr_rate
+  ),
+  col = &quot;red&quot;
+)</code></pre>
+<p><img src="/post/2018-03-06-the-abcs-of-conjugacy_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>abs_diff &lt;- 1e-3
+obs_mean &lt;- mean(y)
+obs_var &lt;- var(y)
+
+reps &lt;- 1e5
+
+aprox_post &lt;- 1:reps %&gt;% purrr::map_dbl(~{
+  prior &lt;- rgamma(n = 1, shape = pr_shape, rate = pr_rate)
+  sim_data &lt;- rpois(N, lambda = prior)
+  match &lt;- abs(mean(sim_data) - obs_mean)
+  #cbind(prior, match) %&gt;% as_tibble()
+  ifelse(match &lt; abs_diff, prior, NA)
+})
+
+hist(aprox_post, freq = F)
+
+x &lt;- seq(0, max(y), length.out = 200)
+lines(x,
+  dgamma(x,
+         shape = gamma_values[&quot;alpha&quot;], 
+         rate = gamma_values[&quot;beta&quot;]
+  ), 
+  type = &quot;l&quot;,
+  col = &quot;blue&quot;
+)</code></pre>
+<p><img src="/post/2018-03-06-the-abcs-of-conjugacy_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-nielsen2013introduction">
+<p>Nielsen, Rasmus, and Montgomery W.. Slatkin. 2013. <em>An Introduction to Population Genetics: Theory and Applications</em>. Sinauer Associates.</p>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//silastittes.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        
+        
+
+          
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
